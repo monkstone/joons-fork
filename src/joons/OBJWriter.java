@@ -1,21 +1,45 @@
 package joons;
 
 //TODO gotta put the methods in the right order, in relevant groups
-
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import joons.util.LUT;
 import static processing.core.PConstants.*;
 import processing.core.PGraphics;
+import processing.core.PShape;
 
 //implement camera() and perspective() to attain camera data
+/**
+ *
+ * @author Joon Hyub Lee
+ */
 public class OBJWriter extends PGraphics {
     //OBJ file and objFile writer
+
+    /**
+     *
+     */
     public enum Axis {
-        X, Y, Z
+
+        /**
+         * The x axis
+         */
+        X,
+        /**
+         * The y axis
+         */
+        Y,
+        /**
+         * The z axis
+         */
+        Z
     }
     private File objFile, cameraFile, perspFile, fmFile, sphereFile;
     private String absolutePath, fileName, cameraFileName, perspFileName, fmFileName, sphereFileName;
@@ -38,6 +62,9 @@ public class OBJWriter extends PGraphics {
     private float aspect = 0;
     boolean OBJWriteEnabled = false;
 
+    /**
+     *
+     */
     public OBJWriter() {
         //initializing
         vertices_list = new ArrayList<String>(); // Create an empty ArrayList
@@ -54,6 +81,10 @@ public class OBJWriter extends PGraphics {
         sphereFileName = "SphereExport.txt";
     }
 
+    /**
+     *
+     * @param notUsed
+     */
     @Override
     public void setPath(String notUsed) {
 
@@ -74,10 +105,16 @@ public class OBJWriter extends PGraphics {
         }
     }
 
+    /**
+     *
+     */
     @Override
     protected void allocate() {
     }
 
+    /**
+     *
+     */
     @Override
     public void beginDraw() {
         // have to create file object here, because the name isn't yet
@@ -94,6 +131,9 @@ public class OBJWriter extends PGraphics {
         // This initializes the sphereExport file, makes it blank.
     }
 
+    /**
+     *
+     */
     @Override
     public void dispose() {
         //is called at endRecord(),
@@ -112,6 +152,9 @@ public class OBJWriter extends PGraphics {
         objWriter = null;
     }
 
+    /**
+     *
+     */
     @Override
     public void noSmooth() {
         //I'm sorry for the confusion, but this is the only possible circumvention
@@ -125,6 +168,9 @@ public class OBJWriter extends PGraphics {
         beginDraw();
     }
 
+    /**
+     *
+     */
     public void refreshVertices() {
         //this nullifies the current vertices and faces matrices,
         //so that a new object can have its own coordinates
@@ -132,6 +178,10 @@ public class OBJWriter extends PGraphics {
         faces = new ArrayList<String>();
     }
 
+    /**
+     *
+     * @param kind
+     */
     @Override
     public void beginShape(int kind) {
         // only the vertices in between beginShape() are recorded
@@ -140,11 +190,22 @@ public class OBJWriter extends PGraphics {
         this.kind = kind;
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     */
     @Override
     public void vertex(float x, float y) {
         vertex(x, y, 0);
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param z
+     */
     @Override
     public void vertex(float x, float y, float z) {
         // is called when the user uses vertex() in p5.
@@ -196,6 +257,10 @@ public class OBJWriter extends PGraphics {
         }
     }
 
+    /**
+     *
+     * @param mode
+     */
     @Override
     public void endShape(int mode) {
         //remove two unnecessary remnants from the strings list
@@ -206,12 +271,37 @@ public class OBJWriter extends PGraphics {
         }
         OBJWriteEnabled = false;
     }
+    
+    /**
+     * This would be a handy method if it could be implemented, to support
+     * the "retained 3D shape", a feature introduced in processing 2.0.
+     * @param sh 
+     */
 
+    @Override
+    public void shape(PShape sh) {
+        if (OBJWriteEnabled && sh.is3D()) {
+            throw new UnsupportedOperationException("not implemented");
+            //OBJWriteEnabled = false;
+        }
+    }
+
+    /**
+     *
+     * @param transX
+     * @param transY
+     */
     @Override
     public void translate(float transX, float transY) {
         translate(transX, transY, 0);
     }
 
+    /**
+     *
+     * @param transX
+     * @param transY
+     * @param transZ
+     */
     @Override
     public void translate(float transX, float transY, float transZ) {
         JVector t = new JVector(transX, transY, transZ);
@@ -219,6 +309,11 @@ public class OBJWriter extends PGraphics {
         translation = translation.add(t);
     }
 
+    /**
+     *
+     * @param v
+     * @return
+     */
     public JVector translateAll(JVector v) {
         //translation keeps track of all the translations user calls,
         //and this method applies all of those translations to a given vector
@@ -227,24 +322,41 @@ public class OBJWriter extends PGraphics {
         return v;
     }
 
+    /**
+     *
+     * @param angle
+     */
     @Override
     public void rotateX(float angle) {
         axisList.add(Axis.X);
         angleList.add(angle);
     }
 
+    /**
+     *
+     * @param angle
+     */
     @Override
     public void rotateY(float angle) {
         axisList.add(Axis.Y);
         angleList.add(angle);
     }
 
+    /**
+     *
+     * @param angle
+     */
     @Override
     public void rotateZ(float angle) {
         axisList.add(Axis.Z);
         angleList.add(angle);
     }
 
+    /**
+     *
+     * @param v
+     * @return
+     */
     public JVector rotateAll(JVector v) {
         //axisList and angleList keep track of all the rotation user calls,
         //and this method applies all of those rotations to a given vector
@@ -272,6 +384,12 @@ public class OBJWriter extends PGraphics {
         return v;
     }
 
+    /**
+     *
+     * @param s
+     * @param v
+     * @return
+     */
     public String generateString(String s, JVector v) {
         //times -1 to y because Processing's coordinate's y is 
         //inverse of that of sunflow
@@ -288,6 +406,9 @@ public class OBJWriter extends PGraphics {
         }
     }
 
+    /**
+     *
+     */
     public void fileMeshExport() {
         //this writes the fileMeshExport.txt
         ArrayList<String> fmLines = new ArrayList<String>();
@@ -315,29 +436,38 @@ public class OBJWriter extends PGraphics {
         }
         if (fmWriter == null) {
             try {
-                fmWriter = new PrintWriter(new FileWriter(fmFile));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                fmWriter = new PrintWriter(fmFile, "UTF-8");
+                try {
+                    for (int i = 0; i < fmLines.size(); i++) {
+                        fmWriter.println((String) fmLines.get(i));
+                    }
+                } finally {
+                    fmWriter.flush();
+                    fmWriter.close();
+                    fmWriter = null;
+                }
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(OBJWriter.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(OBJWriter.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        for (int i = 0; i < fmLines.size(); i++) {
-            fmWriter.println((String) fmLines.get(i));
-        }
-
-        fmWriter.flush();
-        fmWriter.close();
-        fmWriter = null;
     }
 
+    /**
+     *
+     * @param i
+     * @return
+     */
     public ArrayList<String> writeObjectTemplate(int i) {
         //this writes the object template
 		/*template
-        object { 
-        shader DefaultGrey
-        type file-mesh
-        name object0
-        filename object0.obj 
-        }
+         object { 
+         shader DefaultGrey
+         type file-mesh
+         name object0
+         filename object0.obj 
+         }
          */
         ArrayList<String> objLines = new ArrayList<String>();
         objLines.add("object {");
@@ -349,6 +479,13 @@ public class OBJWriter extends PGraphics {
         return objLines;
     }
 
+    /**
+     *
+     * @param fov
+     * @param aspect
+     * @param zNear
+     * @param zFar
+     */
     @Override
     public void perspective(float fov, float aspect, float zNear, float zFar) {
         ArrayList<String> perspLines = new ArrayList<String>();
@@ -393,6 +530,18 @@ public class OBJWriter extends PGraphics {
         perspWriter = null;
     }
 
+    /**
+     *
+     * @param eyeX
+     * @param eyeY
+     * @param eyeZ
+     * @param centerX
+     * @param centerY
+     * @param centerZ
+     * @param upX
+     * @param upY
+     * @param upZ
+     */
     @Override
     public void camera(float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ) {
         ArrayList<String> cameraLines = new ArrayList<String>();
@@ -452,6 +601,10 @@ public class OBJWriter extends PGraphics {
     }
 
     /////////////////////////From hereon are the 3D and 2D primitives/////////////////////////
+    /**
+     *
+     * @param d
+     */
     @Override
     public void box(float d) {
         //is called when the user uses vertex() in p5.
@@ -464,28 +617,28 @@ public class OBJWriter extends PGraphics {
         vertex(-r, -r, r);
         endShape();
 
-        beginShape();// +x side
+        beginShape();// +x Joon Hyub Leee
         vertex(r, r, r);
         vertex(r, -r, r);
         vertex(r, -r, -r);
         vertex(r, r, -r);
         endShape();
 
-        beginShape();// -x side
+        beginShape();// -x Joon Hyub Leee
         vertex(-r, r, r);
         vertex(-r, -r, r);
         vertex(-r, -r, -r);
         vertex(-r, r, -r);
         endShape();
 
-        beginShape();// -y side
+        beginShape();// -y Joon Hyub Leee
         vertex(-r, r, r);
         vertex(-r, r, -r);
         vertex(r, r, -r);
         vertex(r, r, r);
         endShape();
 
-        beginShape();// -y side
+        beginShape();// -y Joon Hyub Leee
         vertex(-r, -r, r);
         vertex(-r, -r, -r);
         vertex(r, -r, -r);
@@ -500,6 +653,12 @@ public class OBJWriter extends PGraphics {
         endShape();
     }
 
+    /**
+     *
+     * @param width
+     * @param height
+     * @param depth
+     */
     @Override
     public void box(float width, float height, float depth) {
         //is called when the user uses vertex() in p5.
@@ -514,28 +673,28 @@ public class OBJWriter extends PGraphics {
         vertex(-w, -h, d);
         endShape();
 
-        beginShape();// +x side
+        beginShape();// +x Joon Hyub Leee
         vertex(w, h, d);
         vertex(w, -h, d);
         vertex(w, -h, -d);
         vertex(w, h, -d);
         endShape();
 
-        beginShape();// -x side
+        beginShape();// -x Joon Hyub Leee
         vertex(-w, h, d);
         vertex(-w, -h, d);
         vertex(-w, -h, -d);
         vertex(-w, h, -d);
         endShape();
 
-        beginShape();// -y side
+        beginShape();// -y Joon Hyub Leee
         vertex(-w, h, d);
         vertex(-w, h, -d);
         vertex(w, h, -d);
         vertex(w, h, d);
         endShape();
 
-        beginShape();// -y side
+        beginShape();// -y Joon Hyub Leee
         vertex(-w, -h, d);
         vertex(-w, -h, -d);
         vertex(w, -h, -d);
@@ -550,6 +709,9 @@ public class OBJWriter extends PGraphics {
         endShape();
     }
 
+    /**
+     *
+     */
     public void wipeSphereFile() {
         sphereLines.add("");
         String fpath = absolutePath + sphereFileName;
@@ -566,33 +728,41 @@ public class OBJWriter extends PGraphics {
         }
         if (sphereWriter == null) {
             try {
-                sphereWriter = new PrintWriter(new FileWriter(sphereFile));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                sphereWriter = new PrintWriter(sphereFile, "UTF-8");
+                try {
+                    for (int i = 0; i < sphereLines.size(); i++) {
+                        sphereWriter.println((String) sphereLines.get(i));
+                    }
+                } finally {
+                    sphereWriter.flush();
+                    sphereWriter.close();
+                    sphereWriter = null;
+                }
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(OBJWriter.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(OBJWriter.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        for (int i = 0; i < sphereLines.size(); i++) {
-            sphereWriter.println((String) sphereLines.get(i));
-        }
-
-        sphereWriter.flush();
-        sphereWriter.close();
-        sphereWriter = null;
     }
 
+    /**
+     *
+     * @param r
+     */
     @Override
     public void sphere(float r) {
         //I've implemented sphere in the external export form,
         //because sunflow seems to offer an optimized render for a perfect sphere,
         //meaning no triangle polygonal mess
 		/* template
-        object {
-        shader Mirror
-        type sphere
-        name mirror
-        c -30 30 20
-        r 20
-        }
+         object {
+         shader Mirror
+         type sphere
+         name mirror
+         c -30 30 20
+         r 20
+         }
          */
         JVector c = new JVector(0, 0, 0);
         //c=rotateAll(c);
@@ -623,24 +793,33 @@ public class OBJWriter extends PGraphics {
         }
         if (sphereWriter == null) {
             try {
-                sphereWriter = new PrintWriter(new FileWriter(sphereFile));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                sphereWriter = new PrintWriter(sphereFile, "UTF-8");
+                try {
+                    for (int i = 0; i < sphereLines.size(); i++) {
+                        sphereWriter.println((String) sphereLines.get(i));
+                    }
+                } finally {
+                    sphereWriter.flush();
+                    sphereWriter.close();
+                    sphereWriter = null;
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(OBJWriter.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        for (int i = 0; i < sphereLines.size(); i++) {
-            sphereWriter.println((String) sphereLines.get(i));
-        }
-
-        sphereWriter.flush();
-        sphereWriter.close();
-        sphereWriter = null;
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     */
     @Override
     public void ellipse(float x, float y, float width, float height) {
         int n = 20;
-        float th = 2 * PI / n; //the circle will be represented by a 30-sided polygon
+        float th = 2 * PI / n; //the circle will be represented by a 30-Joon Hyub Leeed polygon
         beginShape();
         for (int i = 0; i <= n; i++) {
             vertex(x + width * LUT.cos(th * i) / 2, y + height * LUT.sin(th * i) / 2);
@@ -648,6 +827,17 @@ public class OBJWriter extends PGraphics {
         endShape();
     }
 
+    /**
+     *
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @param x3
+     * @param y3
+     * @param x4
+     * @param y4
+     */
     @Override
     public void quad(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
         beginShape();
@@ -658,12 +848,22 @@ public class OBJWriter extends PGraphics {
         endShape();
     }
 
+    /**
+     *
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     */
     @Override
     public void rect(float x, float y, float width, float height) {
         //rect modes are not supported. Use quad.
         quad(0 + x, 0 + y, width + x, 0 + y, width + x, height + y, 0 + x, height + y);
     }
 
+    /**
+     *
+     */
     @Override
     public void pushMatrix() {
         if (!pushed) {
@@ -674,6 +874,9 @@ public class OBJWriter extends PGraphics {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void popMatrix() {
         if (pushed) {

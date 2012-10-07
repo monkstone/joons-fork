@@ -2,8 +2,14 @@ package joons;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import processing.core.PApplet;
 
+/**
+ *
+ * @author Joon Hyub Lee
+ */
 @SuppressWarnings("serial")
 public class SCModifier {
 
@@ -14,6 +20,11 @@ public class SCModifier {
     private File scFile;
     private PrintWriter scWriter;
 
+    /**
+     *
+     * @param parent
+     * @param scFilePath
+     */
     public SCModifier(PApplet parent, String scFilePath) {
         //it reads the given sc file, and write out to a dummy sc file.
 
@@ -33,13 +44,16 @@ public class SCModifier {
         sphereImport = new ArrayList<String>();
     }
 
+    /**
+     *
+     */
     public void readSC() {
         String line = "";
         while (line != null) {
             try {
                 line = scReader.readLine();
             } catch (IOException e) {
-                
+
                 line = null;
             }
             scLines.add(line);
@@ -47,6 +61,11 @@ public class SCModifier {
         scLines.remove(scLines.size() - 1);// removes the last rubbish line
     }
 
+    /**
+     *
+     * @param keywords
+     * @return
+     */
     public int lookForTheFirst(String[] keywords) {
         //it returns the index upon the FIRST encounter with a line
         //which contains all the keywords given
@@ -64,6 +83,12 @@ public class SCModifier {
         return -1;
     }
 
+    /**
+     *
+     * @param keywords
+     * @param indexFrom
+     * @return
+     */
     public int lookForTheFirstFrom(String[] keywords, int indexFrom) {
         //this filter begins looking FROM the specified index, moves down,
         //and returns the index upon the FIRST encounter with a line
@@ -82,6 +107,11 @@ public class SCModifier {
         return -1;
     }
 
+    /**
+     *
+     * @param keywords
+     * @return
+     */
     public int lookForTheLast(String[] keywords) {
         //it returns the index upon the LAST encounter with a line
         //which contains all the keywords given
@@ -100,13 +130,16 @@ public class SCModifier {
         return foundIndex;
     }
 
+    /**
+     *
+     */
     public void importPerspective() {
         String line = "";
         while (line != null) {
             try {
                 line = perspReader.readLine();
             } catch (IOException e) {
-                
+
                 line = null;
             }
 
@@ -116,13 +149,16 @@ public class SCModifier {
         // line
     }
 
+    /**
+     *
+     */
     public void importCamera() {
         String line = "";
         while (line != null) {
             try {
                 line = cameraReader.readLine();
             } catch (IOException e) {
-                
+
                 line = null;
             }
 
@@ -132,14 +168,18 @@ public class SCModifier {
         // line
     }
 
+    /**
+     *
+     * @param lines
+     */
     public void writeBeforeShader(ArrayList<String> lines) {
         //Below is a typical shader layout
         //at the top of the shaders stack
 		/*
-        shader {				<--shaderBeginsAt
-        name debug_caustics
-        type view-caustics
-        }
+         shader {				<--shaderBeginsAt
+         name debug_caustics
+         type view-caustics
+         }
          */
         String[] keywords = {"shader", "{"};
         int shaderBeginsAt = lookForTheFirst(keywords);
@@ -148,16 +188,20 @@ public class SCModifier {
         }
     }
 
+    /**
+     *
+     * @param lines
+     */
     public void writeAfterShader(ArrayList<String> lines) {
         //Below is a typical shader layout
         //at the top of the shaders stack
 		/*
-        shader {			<--lastShaderBeginsAt
-        name Glass
-        type glass
-        eta 1.6
-        color 1 1 1
-        }					<--lastShaderEndsAt
+         shader {			<--lastShaderBeginsAt
+         name Glass
+         type glass
+         eta 1.6
+         color 1 1 1
+         }					<--lastShaderEndsAt
          */
         String[] startKeywords = {"shader", "{"};
         String[] endKeywords = {"}"};
@@ -168,6 +212,9 @@ public class SCModifier {
         }
     }
 
+    /**
+     *
+     */
     public void swapCamPersp() {
         //Below is the default camera layout
 		/*
@@ -189,29 +236,37 @@ public class SCModifier {
         scLines.set(cameraBeginsAt + 6, perspImport.get(1));
     }
 
+    /**
+     *
+     * @param width
+     * @param height
+     */
     public void swapResolution(int width, int height) {
         //Below is the default image setting layout
 		/*
-        image {
-        resolution 565 424	<--resolutionBeginsAt
-        aa 0 2
-        filter gaussian
-        }
+         image {
+         resolution 565 424	<--resolutionBeginsAt
+         aa 0 2
+         filter gaussian
+         }
          */
         String[] keywords = {"resolution"};
         int resolutionBeginsAt = lookForTheFirst(keywords);
         scLines.set(resolutionBeginsAt, "   resolution " + width + " " + height);
     }
 
+    /**
+     *
+     */
     public void wipeFileMesh() {
         //Below is the defalut file-mesh type object layout
 		/*
-        object {					<--fmBeginsAt-2
-        shader DefaultGrey		<--fmBeginsAt-1
-        type file-mesh			<--fmBeginsAt
-        name object0
-        filename object0.obj
-        }
+         object {					<--fmBeginsAt-2
+         shader DefaultGrey		<--fmBeginsAt-1
+         type file-mesh			<--fmBeginsAt
+         name object0
+         filename object0.obj
+         }
          */
         String[] keywords = {"file-mesh"};
         int fmBeginsAt = lookForTheFirst(keywords);
@@ -226,13 +281,16 @@ public class SCModifier {
 
     }
 
+    /**
+     *
+     */
     public void addFileMesh() {
         String line = "";
         while (line != null) {
             try {
                 line = fmReader.readLine();
             } catch (IOException e) {
-                
+
                 line = null;
             }
 
@@ -245,13 +303,16 @@ public class SCModifier {
         }
     }
 
+    /**
+     *
+     */
     public void addSphere() {
         String line = "";
         while (line != null) {
             try {
                 line = sphereReader.readLine();
             } catch (IOException e) {
-                
+
                 line = null;
             }
 
@@ -264,23 +325,28 @@ public class SCModifier {
         }
     }
 
+    /**
+     *
+     * @param objectNames
+     * @param shaderNames
+     */
     public void setShader(ArrayList<String> objectNames, ArrayList<String> shaderNames) {
         //Below is the defalut object layout
 		/*
-        object {
-        shader DefaultGrey		<--objectNameIsAt-2
-        type file-mesh			<--objectNameIsAt-1
-        name object0				<--objectNameIsAt
-        filename object0.obj
-        }
+         object {
+         shader DefaultGrey		<--objectNameIsAt-2
+         type file-mesh			<--objectNameIsAt-1
+         name object0				<--objectNameIsAt
+         filename object0.obj
+         }
         
-        object {
-        shader DefaultGrey
-        type sphere
-        name sphere0
-        c 9.751703 -1.5379201 -1.5934509
-        r 10.0
-        }
+         object {
+         shader DefaultGrey
+         type sphere
+         name sphere0
+         c 9.751703 -1.5379201 -1.5934509
+         r 10.0
+         }
          */
         for (int i = 0; i < objectNames.size(); i++) {
             String objectName = (String) objectNames.get(i);
@@ -294,12 +360,19 @@ public class SCModifier {
         }
     }
 
+    /**
+     *
+     * @param lines
+     */
     public void writeAfterEverything(ArrayList<String> lines) {
         for (int i = 0; i < lines.size(); i++) {
             scLines.add((String) lines.get(i));
         }
     }
 
+    /**
+     *
+     */
     public void writeSC() {
 
         String path = scFilePath;
@@ -317,17 +390,25 @@ public class SCModifier {
 
         if (scWriter == null) {
             try {
-                scWriter = new PrintWriter(new FileWriter(scFile));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                scWriter = new PrintWriter(scFile, "UTF-8");
+                try {
+                    for (int i = 0; i < scLines.size(); i++) {
+                        scWriter.println((String) scLines.get(i));
+                    }
+                } finally {
+                    scWriter.flush();
+                    scWriter.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(SCModifier.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        for (int i = 0; i < scLines.size(); i++) {
-            scWriter.println((String) scLines.get(i));
-        }
+    }
 
-        scWriter.flush();
-        scWriter.close();
+    /**
+     *
+     */
+    public void dispose() {
         scWriter = null;
     }
 }

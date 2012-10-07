@@ -36,6 +36,8 @@ package joons.util;
 
 /**
  * Lookup table for degree cosine/sine, has a fixed precision ca. 0.25 degrees
+ * I've done no performance tests and is quite possible you would be better of
+ * using regular Math functions (however you would need to cast to float?)
  * @author Martin Prout <martin_p@lineone.net>
  */
 public class LUT{
@@ -45,13 +47,28 @@ public class LUT{
      */
     public static float[] sinLUT = new float[361];
     
+    /**
+     *
+     */
     public static final String message = "Sine/Cosine lookup tables initialized" 
     + " with a fixed\nprecision of ca. 0.25 degrees. NB: degree input.\nor use"+
       " LUT.sin(float rad) and or LUT.cosLut(float rad) for radians input\n";
     
+    /**
+     *
+     */
     public static boolean initialized = false;
+    /**
+     *
+     */
     public static final float RAD = 57.29578f;
+    /**
+     *
+     */
     public static final float RAD4 = 229.18312f;
+    /**
+     *
+     */
     public static final float TAU = 6.2831853f;
 
 

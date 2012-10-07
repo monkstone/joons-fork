@@ -4,18 +4,29 @@ package joons;
 import org.sunflow.SunflowAPI;
 import org.sunflow.system.ImagePanel;
 
+/**
+ *
+ * @author Joon Hyub Lee
+ */
 public class SunflowRenderer {
 
 	private SunflowAPI api;
 	private ImagePanel imagePanel = new ImagePanel();
 	private String scFilePath, renderFilePath, buildTemplate;
 
-	public SunflowRenderer() {
+	/**
+     *
+     */
+    public SunflowRenderer() {
 		super();
 		api = null; //initialization
 	}
 	
-	public void autoRender(String renderType) {
+	/**
+     *
+     * @param renderType
+     */
+    public void autoRender(String renderType) {
 		//called by JoonsRenderer
 		openFile();
 		build();
@@ -23,12 +34,20 @@ public class SunflowRenderer {
 		saveFile();
 	}
 	
-	public void setSCFilePath(String scFilePath){
+	/**
+     *
+     * @param scFilePath
+     */
+    public void setSCFilePath(String scFilePath){
 		//called by JoonsRenderer
 		this.scFilePath=scFilePath;
 	}
 	
-	public void setRenderFilePath(String renderFilePath){
+	/**
+     *
+     * @param renderFilePath
+     */
+    public void setRenderFilePath(String renderFilePath){
 		//called by JoonsRenderer
 		this.renderFilePath=renderFilePath;
 	}
