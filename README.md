@@ -1,6 +1,6 @@
 # joons fork #
 
-Read wiki [here](https://github.com/monkstone/joons/wiki) 
+Read wiki [here](https://github.com/monkstone/joons-fork/wiki/_pages) 
 
 Download library [here](https://github.com/monkstone/joons/downloads) 
 
