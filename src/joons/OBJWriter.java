@@ -142,7 +142,7 @@ public class OBJWriter extends PGraphics {
         //Generating strings for faces
         for (int i = 0; i < (vertices_list.size() / 3); i++) {
             int j = i * 3;
-            faces.add("f" + " " + (j + 1) + " " + (j + 2) + " " + (j + 3));
+            faces.add(String.format("f %d %d %d", (j + 1), (j + 2), (j + 3)));
         }
 
         writeOBJ();
@@ -378,7 +378,6 @@ public class OBJWriter extends PGraphics {
                         v.rotateZ(jaxis, angleList.get(i));
                         break;
                 }
-
             }
         }
         return v;
@@ -393,16 +392,16 @@ public class OBJWriter extends PGraphics {
     public String generateString(String s, JVector v) {
         //times -1 to y because Processing's coordinate's y is 
         //inverse of that of sunflow
-        return s + " " + v.getX() + " " + (-1) * v.getY() + " " + v.getZ();
+        return String.format("%s %f %f %f", s, v.getX(), -1 * v.getY(), v.getZ());
     }
 
     private void writeOBJ() {
         //this writes the contents in the .obj files
-        for (int i = 0; i < vertices_list.size(); i++) {
-            objWriter.println((String) vertices_list.get(i));
+        for (String vertex : vertices_list) {
+            objWriter.println(vertex);
         }
-        for (int i = 0; i < faces.size(); i++) {
-            objWriter.println((String) faces.get(i));
+        for (String face : faces) {
+            objWriter.println(face);
         }
     }
 
@@ -438,8 +437,8 @@ public class OBJWriter extends PGraphics {
             try {
                 fmWriter = new PrintWriter(fmFile, "UTF-8");
                 try {
-                    for (int i = 0; i < fmLines.size(); i++) {
-                        fmWriter.println((String) fmLines.get(i));
+                    for (String fmLine : fmLines) {
+                        fmWriter.println(fmLine);
                     }
                 } finally {
                     fmWriter.flush();
@@ -617,28 +616,28 @@ public class OBJWriter extends PGraphics {
         vertex(-r, -r, r);
         endShape();
 
-        beginShape();// +x Joon Hyub Leee
+        beginShape();// +x 
         vertex(r, r, r);
         vertex(r, -r, r);
         vertex(r, -r, -r);
         vertex(r, r, -r);
         endShape();
 
-        beginShape();// -x Joon Hyub Leee
+        beginShape();// -x 
         vertex(-r, r, r);
         vertex(-r, -r, r);
         vertex(-r, -r, -r);
         vertex(-r, r, -r);
         endShape();
 
-        beginShape();// -y Joon Hyub Leee
+        beginShape();// -y 
         vertex(-r, r, r);
         vertex(-r, r, -r);
         vertex(r, r, -r);
         vertex(r, r, r);
         endShape();
 
-        beginShape();// -y Joon Hyub Leee
+        beginShape();// -y 
         vertex(-r, -r, r);
         vertex(-r, -r, -r);
         vertex(r, -r, -r);
@@ -673,28 +672,28 @@ public class OBJWriter extends PGraphics {
         vertex(-w, -h, d);
         endShape();
 
-        beginShape();// +x Joon Hyub Leee
+        beginShape();// +x 
         vertex(w, h, d);
         vertex(w, -h, d);
         vertex(w, -h, -d);
         vertex(w, h, -d);
         endShape();
 
-        beginShape();// -x Joon Hyub Leee
+        beginShape();// -x 
         vertex(-w, h, d);
         vertex(-w, -h, d);
         vertex(-w, -h, -d);
         vertex(-w, h, -d);
         endShape();
 
-        beginShape();// -y Joon Hyub Leee
+        beginShape();// -y 
         vertex(-w, h, d);
         vertex(-w, h, -d);
         vertex(w, h, -d);
         vertex(w, h, d);
         endShape();
 
-        beginShape();// -y Joon Hyub Leee
+        beginShape();// -y 
         vertex(-w, -h, d);
         vertex(-w, -h, -d);
         vertex(w, -h, -d);
@@ -772,8 +771,8 @@ public class OBJWriter extends PGraphics {
         sphereLines.add("   shader DefaultGrey");
         sphereLines.add("   type sphere");
         sphereLines.add("   name sphere" + sphereIndex);
-        sphereLines.add("   c " + c.getX() + " " + -1 * c.getY() + " " + c.getZ()); //times -1 to y because p5's y = sunflow's -y
-        sphereLines.add("   r " + r);
+        sphereLines.add(String.format("   c %f %f %f", c.getX(), -1 * c.getY(), c.getZ())); //times -1 to y because p5's y = sunflow's -y
+        sphereLines.add(String.format("   r %f", r));
         sphereLines.add("}");
         sphereLines.add("");
 
@@ -819,7 +818,7 @@ public class OBJWriter extends PGraphics {
     @Override
     public void ellipse(float x, float y, float width, float height) {
         int n = 20;
-        float th = 2 * PI / n; //the circle will be represented by a 30-Joon Hyub Leeed polygon
+        float th = 2 * PI / n; //the circle will be represented by a 30-sided polygon
         beginShape();
         for (int i = 0; i <= n; i++) {
             vertex(x + width * LUT.cos(th * i) / 2, y + height * LUT.sin(th * i) / 2);

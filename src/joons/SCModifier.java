@@ -2,6 +2,7 @@ package joons;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import processing.core.PApplet;
@@ -48,17 +49,15 @@ public class SCModifier {
      *
      */
     public void readSC() {
-        String line = "";
-        while (line != null) {
-            try {
-                line = scReader.readLine();
-            } catch (IOException e) {
-
-                line = null;
-            }
-            scLines.add(line);
-        }
-        scLines.remove(scLines.size() - 1);// removes the last rubbish line
+        try {
+            String line;
+                while ((line = scReader.readLine()) != null) {
+                    scLines.add(line);
+                }
+        } 
+        catch (IOException ex) {
+            Logger.getLogger(SCModifier.class.getName()).log(Level.SEVERE, null, ex);
+        } 
     }
 
     /**
@@ -273,10 +272,11 @@ public class SCModifier {
 
         if (fmBeginsAt != -1) {
             //-1 means nothing to wipe
-            int iterate = scLines.size() - (fmBeginsAt - 2);
-            for (int i = 0; i < iterate; i++) {
-                scLines.remove(scLines.size() - 1);
-            }
+            //  int iterate = scLines.size() - (fmBeginsAt - 2);
+            scLines.clear();
+            //  for (int i = 0; i < iterate; i++) {
+            //      scLines.remove(scLines.size() - 1);
+            //  }
         }
 
     }
@@ -298,8 +298,8 @@ public class SCModifier {
         }
         fmImport.remove(fmImport.size() - 1);// removes the last rubbish line
 
-        for (int i = 0; i < fmImport.size(); i++) {
-            scLines.add((String) fmImport.get(i));
+        for (String mesh : fmImport) {
+            scLines.add(mesh);
         }
     }
 
@@ -307,21 +307,16 @@ public class SCModifier {
      *
      */
     public void addSphere() {
-        String line = "";
-        while (line != null) {
-            try {
-                line = sphereReader.readLine();
-            } catch (IOException e) {
-
-                line = null;
+        String line;
+        try {
+            while ((line = sphereReader.readLine()) != null) {
+                sphereImport.add(line);
             }
-
-            sphereImport.add(line);
+        } catch (IOException ex) {
+            Logger.getLogger(SCModifier.class.getName()).log(Level.SEVERE, null, ex);
         }
-        sphereImport.remove(sphereImport.size() - 1);// removes the last rubbish line
-
-        for (int i = 0; i < sphereImport.size(); i++) {
-            scLines.add((String) sphereImport.get(i));
+        for (String sphere : sphereImport) {
+            scLines.add(sphere);
         }
     }
 
@@ -365,8 +360,8 @@ public class SCModifier {
      * @param lines
      */
     public void writeAfterEverything(ArrayList<String> lines) {
-        for (int i = 0; i < lines.size(); i++) {
-            scLines.add((String) lines.get(i));
+        for (String line : lines) {
+            scLines.add(line);
         }
     }
 
@@ -392,8 +387,8 @@ public class SCModifier {
             try {
                 scWriter = new PrintWriter(scFile, "UTF-8");
                 try {
-                    for (int i = 0; i < scLines.size(); i++) {
-                        scWriter.println((String) scLines.get(i));
+                    for (String scLine : scLines) {
+                        scWriter.println(scLine);
                     }
                 } finally {
                     scWriter.flush();
