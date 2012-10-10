@@ -10,7 +10,7 @@ import processing.core.PApplet;
  *
  * @author Joon Hyub Lee
  */
-@SuppressWarnings("serial")
+
 public class SCModifier {
 
     PApplet parent;
@@ -70,10 +70,12 @@ public class SCModifier {
         //if not found, it returns -1;
 
         boolean found;
-        for (int i = 0; i < scLines.size(); i++) {
+        int i = -1;
+        for(String scLine : scLines){
+            i++;
             found = true;
-            for (int j = 0; j < keywords.length; j++) {
-                found = found & (scLines.get(i).contains(keywords[j]));
+            for (String keyword : keywords) {
+                found = found & (scLine.contains(keyword));
             }
             if (found) {
                 return i;
@@ -96,8 +98,8 @@ public class SCModifier {
         boolean found;
         for (int i = indexFrom; i < scLines.size(); i++) {
             found = true;
-            for (int j = 0; j < keywords.length; j++) {
-                found = found & (scLines.get(i).contains(keywords[j]));
+            for (String keyword : keywords) {
+                found = found & (scLines.get(i).contains(keyword));
             }
             if (found) {
                 return i;
@@ -119,8 +121,8 @@ public class SCModifier {
         boolean found;
         for (int i = 0; i < scLines.size(); i++) {
             found = true;
-            for (int j = 0; j < keywords.length; j++) {
-                found = found & (scLines.get(i).contains(keywords[j]));
+            for (String keyword : keywords) {
+                found = found & (scLines.get(i).contains(keyword));
             }
             if (found) {
                 foundIndex = i;
@@ -255,7 +257,7 @@ public class SCModifier {
     }
 
     /**
-     *
+     * Clear file mesh store
      */
     public void wipeFileMesh() {
         //Below is the defalut file-mesh type object layout
@@ -282,29 +284,26 @@ public class SCModifier {
     }
 
     /**
-     *
+     * Add mesh from file
      */
     public void addFileMesh() {
-        String line = "";
-        while (line != null) {
-            try {
-                line = fmReader.readLine();
-            } catch (IOException e) {
-
-                line = null;
-            }
-
-            fmImport.add(line);
-        }
-        fmImport.remove(fmImport.size() - 1);// removes the last rubbish line
-
-        for (String mesh : fmImport) {
-            scLines.add(mesh);
+        try {
+            String line;
+              while ((line = fmReader.readLine()) != null) {
+                  fmImport.add(line);
+              }
+              for (String mesh : fmImport) {
+                  scLines.add(mesh);
+              }
+        } catch (IOException ex) {
+            Logger.getLogger(SCModifier.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+
 
     /**
-     *
+     * Add the spheres
      */
     public void addSphere() {
         String line;
