@@ -2,7 +2,6 @@ package joons;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import processing.core.PApplet;
@@ -69,6 +68,7 @@ public class SCModifier {
         //it returns the index upon the FIRST encounter with a line
         //which contains all the keywords given
         //if not found, it returns -1;
+
         boolean found;
         for (int i = 0; i < scLines.size(); i++) {
             found = true;

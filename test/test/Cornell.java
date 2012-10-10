@@ -39,7 +39,7 @@ public class Cornell extends PApplet {
 	float upY = 0;
 	float upZ = -1;
 	float fov = PI / 4; 
-	float aspect = (float) 1.3333;  
+	float aspect = 1.3333f;  
 	float zNear = 5;
 	float zFar = 10000;
 	///																					   ///

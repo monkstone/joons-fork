@@ -140,10 +140,10 @@ public class OBJWriter extends PGraphics {
         //but is also called at noSmooth()
 
         //Generating strings for faces
-        for (int i = 0; i < (vertices_list.size() / 3); i++) {
-            int j = i * 3;
-            faces.add(String.format("f %d %d %d", (j + 1), (j + 2), (j + 3)));
+        for (int i = 0; i < vertices_list.size(); i += 3) {
+            faces.add(String.format("f %d %d %d", (i + 1), (i + 2), (i + 3)));
         }
+
 
         writeOBJ();
         fileMeshExport();
@@ -416,8 +416,8 @@ public class OBJWriter extends PGraphics {
         for (int i = 0; i <= objectIndex; i++) {
             fmLines.add("");
             objLines = writeObjectTemplate(i);
-            for (int j = 0; j < objLines.size(); j++) {
-                fmLines.add((String) objLines.get(j));
+            for (String objLine : objLines) {
+                fmLines.add(objLine);
             }
         }
 
@@ -520,8 +520,8 @@ public class OBJWriter extends PGraphics {
                 throw new RuntimeException(e);
             }
         }
-        for (int i = 0; i < perspLines.size(); i++) {
-            perspWriter.println((String) perspLines.get(i));
+        for (String perspective : perspLines) {
+            perspWriter.println(perspective);
         }
 
         perspWriter.flush();
@@ -589,8 +589,8 @@ public class OBJWriter extends PGraphics {
                 throw new RuntimeException(e);
             }
         }
-        for (int i = 0; i < cameraLines.size(); i++) {
-            cameraWriter.println((String) cameraLines.get(i));
+        for (String camline: cameraLines) {
+            cameraWriter.println(camline);
         }
 
         cameraWriter.flush();
@@ -729,8 +729,8 @@ public class OBJWriter extends PGraphics {
             try {
                 sphereWriter = new PrintWriter(sphereFile, "UTF-8");
                 try {
-                    for (int i = 0; i < sphereLines.size(); i++) {
-                        sphereWriter.println((String) sphereLines.get(i));
+                    for (String sphere : sphereLines) {
+                        sphereWriter.println(sphere);
                     }
                 } finally {
                     sphereWriter.flush();
@@ -794,8 +794,8 @@ public class OBJWriter extends PGraphics {
             try {
                 sphereWriter = new PrintWriter(sphereFile, "UTF-8");
                 try {
-                    for (int i = 0; i < sphereLines.size(); i++) {
-                        sphereWriter.println((String) sphereLines.get(i));
+                    for (String sphere: sphereLines) {
+                        sphereWriter.println(sphere);
                     }
                 } finally {
                     sphereWriter.flush();
