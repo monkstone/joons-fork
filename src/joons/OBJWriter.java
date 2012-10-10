@@ -872,6 +872,15 @@ public class OBJWriter extends PGraphics {
             angleListPushed = new ArrayList(angleList);
         }
     }
+    
+     /**
+      * Assert this is a 3D renderer
+      * @return true
+      */
+    @Override
+    public boolean is3D(){
+        return true;    
+    }
 
     /**
      *
