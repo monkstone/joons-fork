@@ -18,22 +18,37 @@ import processing.core.PApplet;
  */
 public class SCModifierTest {
     SCModifier instance;
+    /**
+     *
+     */
     public SCModifierTest() {
     }
     
+    /**
+     *
+     */
     @BeforeClass
     public static void setUpClass() {
     }
     
+    /**
+     *
+     */
     @AfterClass
     public static void tearDownClass() {
     }
     
+    /**
+     *
+     */
     @Before
     public void setUp() {
         instance = new SCModifier(new PApplet(), "/home/sid/test.sc") ;
     }
     
+    /**
+     *
+     */
     @After
     public void tearDown() {
     }

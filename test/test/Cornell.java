@@ -22,6 +22,10 @@ package test;
 import joons.JoonsRenderer;
 import processing.core.PApplet;
 
+/**
+ *
+ * @author sid
+ */
 public class Cornell extends PApplet {
 
 	JoonsRenderer jr;
@@ -45,6 +49,9 @@ public class Cornell extends PApplet {
 	///																					   ///
 	//////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     *
+     */
     @Override
 	public void setup() {
 		size(400, 300, P3D);
@@ -63,6 +70,9 @@ public class Cornell extends PApplet {
 		*/
 	}
 
+    /**
+     *
+     */
     @Override
 	public void draw() {
 
@@ -90,6 +100,9 @@ public class Cornell extends PApplet {
             }
 	}
 
+    /**
+     *
+     */
     @Override
 	public void keyPressed() {
 		if (key == 'r' || key == 'R' && !rendered) {
@@ -112,7 +125,11 @@ public class Cornell extends PApplet {
 			// if successfully rendered, returns true
 		}
 	}
-        public static void main(String[] args){
+        /**
+     *
+     * @param args
+     */
+    public static void main(String[] args){
             PApplet.main(new String[]{"test.Cornell"});
         }
 }

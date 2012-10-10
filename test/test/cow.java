@@ -3,6 +3,10 @@ package test;
 import joons.*;
 import processing.core.*;
 
+/**
+ *
+ * @author sid
+ */
 public class cow extends PApplet {
 
     JoonsRenderer jr;
@@ -22,6 +26,9 @@ public class cow extends PApplet {
     float zFar = 10000;
     PShape cow;
 
+    /**
+     *
+     */
     @Override
     public void setup() {
         size(1024, 768, P3D);
@@ -33,6 +40,9 @@ public class cow extends PApplet {
         cow.translate(0, 5, 0);
     }
 
+    /**
+     *
+     */
     @Override
     public void draw() {
         background(128);
@@ -46,6 +56,9 @@ public class cow extends PApplet {
         }
     }
 
+    /**
+     *
+     */
     @Override
     public void keyPressed() {
         if (key == 'e' || key == 'E') {
@@ -67,6 +80,10 @@ public class cow extends PApplet {
         }
     }
 
+    /**
+     *
+     * @param passedArgs
+     */
     static public void main(String[] passedArgs) {
         String[] appletArgs = new String[]{"test.cow"};
         if (passedArgs != null) {
