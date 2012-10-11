@@ -61,6 +61,7 @@ public class OBJWriter extends PGraphics {
     private int sphereIndex = 0;
     private float aspect = 0;
     boolean OBJWriteEnabled = false;
+    final String VECT = "v";
 
     /**
      *
@@ -219,13 +220,13 @@ public class OBJWriter extends PGraphics {
                 vertexVector = translateAll(vertexVector);
                 if (oldVertex1 != null && oldVertex2 != null) {
                     if (mod == 0) {
-                        vertices_list.add(generateString("v", oldVertex1));
-                        vertices_list.add(generateString("v", oldVertex2));
-                        vertices_list.add(generateString("v", vertexVector));
+                        vertices_list.add(generateString(VECT, oldVertex1));
+                        vertices_list.add(generateString(VECT, oldVertex2));
+                        vertices_list.add(generateString(VECT, vertexVector));
                     } else {
-                        vertices_list.add(generateString("v", oldVertex2));
-                        vertices_list.add(generateString("v", vertexVector));
-                        vertices_list.add(generateString("v", oldVertex1));
+                        vertices_list.add(generateString(VECT, oldVertex2));
+                        vertices_list.add(generateString(VECT, vertexVector));
+                        vertices_list.add(generateString(VECT, oldVertex1));
                     }
                 }
                 if (mod == 0) {
@@ -247,11 +248,11 @@ public class OBJWriter extends PGraphics {
                 if (vertexCnt == 3) {
                     //when there are more than 3 vertices in a beginShape(),
                     //we need to create another, new triangle
-                    vertices_list.add(generateString("v", vertexVector));
-                    vertices_list.add(generateString("v", initVertexVector));
+                    vertices_list.add(generateString(VECT, vertexVector));
+                    vertices_list.add(generateString(VECT, initVertexVector));
                     vertexCnt = 2;
                 }
-                vertices_list.add(generateString("v", vertexVector));
+                vertices_list.add(generateString(VECT, vertexVector));
             }
 
         }
@@ -871,6 +872,25 @@ public class OBJWriter extends PGraphics {
             axisListPushed = new ArrayList(axisList);
             angleListPushed = new ArrayList(angleList);
         }
+    }
+    
+    /**
+     * Code from DXF export, probably irrelevant here. The default is zero.
+     *
+     * @return
+     */
+    @Override
+    public boolean displayable() {
+        return false;  // just in case someone wants to use this on its own
+    }
+    
+    /**
+     * Assert this is not a 2D renderer
+     * @return
+     */
+    @Override
+    public boolean is2D() {
+        return false;
     }
     
      /**
