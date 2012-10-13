@@ -10,7 +10,6 @@ import processing.core.PApplet;
  *
  * @author Joon Hyub Lee
  */
-
 public class SCModifier {
 
     PApplet parent;
@@ -50,13 +49,12 @@ public class SCModifier {
     public void readSC() {
         try {
             String line;
-                while ((line = scReader.readLine()) != null) {
-                    scLines.add(line);
-                }
-        } 
-        catch (IOException ex) {
+            while ((line = scReader.readLine()) != null) {
+                scLines.add(line);
+            }
+        } catch (IOException ex) {
             Logger.getLogger(SCModifier.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
     }
 
     /**
@@ -71,7 +69,7 @@ public class SCModifier {
 
         boolean found;
         int i = -1;
-        for(String scLine : scLines){
+        for (String scLine : scLines) {
             i++;
             found = true;
             for (String keyword : keywords) {
@@ -289,18 +287,16 @@ public class SCModifier {
     public void addFileMesh() {
         try {
             String line;
-              while ((line = fmReader.readLine()) != null) {
-                  fmImport.add(line);
-              }
-              for (String mesh : fmImport) {
-                  scLines.add(mesh);
-              }
+            while ((line = fmReader.readLine()) != null) {
+                fmImport.add(line);
+            }
+            for (String mesh : fmImport) {
+                scLines.add(mesh);
+            }
         } catch (IOException ex) {
             Logger.getLogger(SCModifier.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-
 
     /**
      * Add the spheres

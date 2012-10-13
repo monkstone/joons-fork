@@ -1,16 +1,25 @@
 package joons;
 
 import joons.util.LUT;
-
+import static processing.core.PConstants.*;
 /**
  *
  * @author Joon Hyub Lee
  */
 public class JVector {
 
-    private float x;
-    private float y;
-    private float z;
+    /**
+     *
+     */
+    public float x;
+    /**
+     *
+     */
+    public float y;
+    /**
+     *
+     */
+    public float z;
 
     /**
      *
@@ -26,51 +35,14 @@ public class JVector {
     }
 
     /**
+     * Implement a copy constructor
      *
-     * @param x
+     * @param v
      */
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    /**
-     *
-     * @param y
-     */
-    public void setY(float y) {
-        this.y = y;
-    }
-
-    /**
-     *
-     * @param z
-     */
-    public void setZ(float z) {
-        this.z = z;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public float getX() {
-        return x;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public float getY() {
-        return y;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public float getZ() {
-        return z;
+    public JVector(JVector v) {
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
     }
 
     /**
@@ -103,7 +75,7 @@ public class JVector {
      * @return
      */
     public JVector add(JVector v) {
-        return new JVector(x + v.getX(), y + v.getY(), z + v.getZ());
+        return new JVector(x + v.x, y + v.y, z + v.z);
     }
 
     /**
@@ -115,14 +87,14 @@ public class JVector {
         //this method rotates this vector about the u vector by the angle th.//
         ///////////////////////////////////////////////////////////////////////  
 
-        float ux = u.getX();
-        float uy = u.getY();
-        float uz = u.getZ();
-        float vlengthBefore = (float) Math.sqrt(sq(this.getX()) + sq(this.getY()) + sq(this.getZ()));
+        float ux = u.x;
+        float uy = u.y;
+        float uz = u.z;
+        float vlengthBefore = (float) Math.sqrt(x * x + y * y + z * z);
 
         //normalizing the u vector
-        float ulength = (float) Math.sqrt(sq(ux) + sq(uy) + sq(uz));
-        if (ulength < 0.000001) {
+        float ulength = (float) Math.sqrt(ux * ux + uy * uy + uz * uz);
+        if (ulength < EPSILON) {
             ulength = 1.0f;
         }
         ux = ux / ulength;
@@ -130,14 +102,14 @@ public class JVector {
         uz = uz / ulength;
 
         //actual rotation calculation
-        float xprime = (sq(ux) + (1 - sq(ux)) * LUT.cos(th)) * x + (ux * uy * (1 - LUT.cos(th)) - uz * LUT.sin(th)) * y + (ux * uz * (1 - LUT.cos(th)) + uy * LUT.sin(th)) * z;
-        float yprime = (ux * uy * (1 - LUT.cos(th)) + uz * LUT.sin(th)) * x + (sq(uy) + (1 - sq(uy)) * LUT.cos(th)) * y + (uy * uz * (1 - LUT.cos(th)) - ux * LUT.sin(th)) * z;
-        float zprime = (ux * uz * (1 - LUT.cos(th)) - uy * LUT.sin(th)) * x + (uy * uz * (1 - LUT.cos(th)) + ux * LUT.sin(th)) * y + (sq(uz) + (1 - sq(uz)) * LUT.cos(th)) * z;
+        float xprime = (ux * ux + (1 - ux * ux) * LUT.cos(th)) * x + (ux * uy * (1 - LUT.cos(th)) - uz * LUT.sin(th)) * y + (ux * uz * (1 - LUT.cos(th)) + uy * LUT.sin(th)) * z;
+        float yprime = (ux * uy * (1 - LUT.cos(th)) + uz * LUT.sin(th)) * x + (uy * uy + (1 - uy * uy) * LUT.cos(th)) * y + (uy * uz * (1 - LUT.cos(th)) - ux * LUT.sin(th)) * z;
+        float zprime = (ux * uz * (1 - LUT.cos(th)) - uy * LUT.sin(th)) * x + (uy * uz * (1 - LUT.cos(th)) + ux * LUT.sin(th)) * y + (uz * uz + (1 - uz * uz) * LUT.cos(th)) * z;
 
         //seeing if the above calculation has reduced or enlarged the length due to calculation inaccuracies, and compensating
-        float vlengthAfter = (float) Math.sqrt(sq(xprime) + sq(yprime) + sq(zprime));
+        float vlengthAfter = (float) Math.sqrt(xprime * xprime + yprime * yprime + zprime * zprime);
 
-        if (vlengthAfter > 0.000001) {
+        if (vlengthAfter > EPSILON) {
             xprime = xprime * vlengthBefore / vlengthAfter;
             yprime = yprime * vlengthBefore / vlengthAfter;
             zprime = zprime * vlengthBefore / vlengthAfter;
@@ -181,16 +153,8 @@ public class JVector {
      * @return
      */
     public float length() {
-        return (float) Math.sqrt(sq(x) + sq(y) + sq(z));
+        return (float) Math.sqrt(x * x + y * y + z * z);
     }
 
-    //Defined math functions for convenience
-    /**
-     *
-     * @param x
-     * @return
-     */
-    public static float sq(float x) {
-        return x * x;
-    }
+
 }

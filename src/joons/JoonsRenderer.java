@@ -13,11 +13,10 @@ public class JoonsRenderer {
     //and display it
 
     private PApplet parent;
+    private boolean isActive = true;
     private SunflowRenderer sunflowRenderer;
     private String scFileName, renderFileName;
-    /**
-     *
-     */
+    private RenderStatus status = RenderStatus.START;
     protected static String renderFolderName;
     private int width, height;
     private double renderSpeed = 1;
@@ -38,6 +37,7 @@ public class JoonsRenderer {
     public JoonsRenderer(PApplet parent, int width, int height) {
         this.parent = parent;
         parent.registerMethod("dispose", this);
+        parent.registerMethod("draw", this);
         SEPARATOR = System.getProperty("file.separator");
         sunflowRenderer = new SunflowRenderer();
         renderFolderName = "JoonsWIP";
@@ -130,28 +130,46 @@ public class JoonsRenderer {
      * @return
      */
     public boolean render(String renderType) {
-        sunflowRenderer.autoRender(renderType);
+        if (status.equals(RenderStatus.START)) {
+            status = RenderStatus.TRACING;
+            parent.noLoop();
+            sunflowRenderer.autoRender(renderType);
+            parent.loop();
+            status = RenderStatus.TRACED;
+        }
         return true;
+    }
+    
+    public boolean displaySketch(){
+        boolean temp = true;
+        if (status.equals(RenderStatus.TRACED)){
+            temp = false;
+        }
+        return temp;
+    
     }
 
     /**
      *
      */
-    public void display() {
-        parent.background(0);
-        //this is to reset the display before displaying the rendered image
-        PImage renderResult;
-        renderResult = parent.loadImage("renderWIP.png");
-        parent.noLights();
-        parent.camera();
-        parent.perspective();
-        parent.image(renderResult, 0, 0, width, height);
+    public void draw() {
+        if (status.equals(RenderStatus.TRACED)) {
+            parent.background(0);
+            //this is to reset the display before displaying the rendered image
+            PImage renderResult;
+            renderResult = parent.loadImage("renderWIP.png");
+            parent.noLights();
+            parent.camera();
+            parent.perspective();
+            parent.image(renderResult, 0, 0, width, height);
+        }
     }
 
     /**
      *
      */
     public void dispose() {
-        scm.dispose();
+        parent.unregisterMethod("draw", this);
+     //   scm.dispose();
     }
 }

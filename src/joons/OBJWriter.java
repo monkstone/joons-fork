@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import joons.util.LUT;
@@ -17,44 +18,25 @@ import processing.core.PShape;
 
 //implement camera() and perspective() to attain camera data
 /**
+ * Since processing-2.0 PGraphics3D doesn't exist (only 2D and 3D version of
+ * PGraphics)
  *
- * @author Joon Hyub Lee
+ * @author Joon Hyub Lee (updated for processing-2.0 and further modified by
+ * Martin Prout)
  */
 public class OBJWriter extends PGraphics {
-    //OBJ file and objFile writer
 
-    /**
-     *
-     */
-    public enum Axis {
-
-        /**
-         * The x axis
-         */
-        X,
-        /**
-         * The y axis
-         */
-        Y,
-        /**
-         * The z axis
-         */
-        Z
-    }
     private File objFile, cameraFile, perspFile, fmFile, sphereFile;
     private String absolutePath, fileName, cameraFileName, perspFileName, fmFileName, sphereFileName;
     private PrintWriter objWriter, cameraWriter, perspWriter, fmWriter, sphereWriter;
-    //other necessary variables
     private ArrayList<String> vertices_list;
     private ArrayList<String> faces;
-    private ArrayList<Axis> axisList;
-    private ArrayList<Axis> axisListPushed;
-    private ArrayList<Float> angleList;
-    private ArrayList<Float> angleListPushed;
+    private ArrayList<Rotation> rotList;     // original had two ArrayLists one Float one String
+    private Stack<ArrayList<Rotation>> rotStack;
+    private Stack<JVector> transStack;
     private ArrayList<String> sphereLines;
+
     private JVector initVertexVector, translation, oldVertex1, oldVertex2;
-    private JVector initVertexVectorPushed, translationPushed, oldVertex1Pushed, oldVertex2Pushed;
-    private boolean pushed;
     private int kind;
     private int vertexCnt;
     private int objectIndex = 0;
@@ -64,16 +46,17 @@ public class OBJWriter extends PGraphics {
     final String VECT = "v";
 
     /**
-     *
+     * Constructor initializes lists LUT etc
      */
     public OBJWriter() {
-        //initializing
         vertices_list = new ArrayList<String>(); // Create an empty ArrayList
         faces = new ArrayList<String>();
-        axisList = new ArrayList<Axis>();
-        angleList = new ArrayList<Float>();
+        rotList = new ArrayList<Rotation>();
         translation = new JVector(0, 0, 0);
         sphereLines = new ArrayList<String>();
+        rotStack = new Stack<ArrayList<Rotation>>();
+        transStack = new Stack<JVector>();
+
         LUT.initialize();
         fileName = "object" + objectIndex + ".obj";
         cameraFileName = "CameraExport.txt";
@@ -88,7 +71,6 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void setPath(String notUsed) {
-
         absolutePath = parent.sketchPath("") + "JoonsWIP" + java.io.File.separatorChar;
         new File(absolutePath).mkdirs();
 
@@ -133,19 +115,14 @@ public class OBJWriter extends PGraphics {
     }
 
     /**
-     *
+     * Called at endRecord(), also called at noSmooth() generates strings for
+     * faces
      */
     @Override
     public void dispose() {
-        //is called at endRecord(),
-        //but is also called at noSmooth()
-
-        //Generating strings for faces
         for (int i = 0; i < vertices_list.size(); i += 3) {
             faces.add(String.format("f %d %d %d", (i + 1), (i + 2), (i + 3)));
         }
-
-
         writeOBJ();
         fileMeshExport();
         objWriter.flush();
@@ -154,13 +131,11 @@ public class OBJWriter extends PGraphics {
     }
 
     /**
-     *
+     * This method is a bit of hack, and is used to generate separate objects.
+     * The writes objects to separate files
      */
     @Override
     public void noSmooth() {
-        //I'm sorry for the confusion, but this is the only possible circumvention
-        //to create separate objects and write them into separate files
-
         dispose();
         objectIndex++;
         fileName = "object" + objectIndex + ".obj";
@@ -272,13 +247,13 @@ public class OBJWriter extends PGraphics {
         }
         OBJWriteEnabled = false;
     }
-    
-    /**
-     * This would be a handy method if it could be implemented, to support
-     * the "retained 3D shape", a feature introduced in processing 2.0.
-     * @param sh 
-     */
 
+    /**
+     * This would be a handy method if it could be implemented, to support the
+     * "retained 3D shape", a feature introduced in processing 2.0.
+     *
+     * @param sh
+     */
     @Override
     public void shape(PShape sh) {
         if (OBJWriteEnabled && sh.is3D()) {
@@ -329,8 +304,7 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void rotateX(float angle) {
-        axisList.add(Axis.X);
-        angleList.add(angle);
+        rotList.add(new Rotation(Axis.X, angle));
     }
 
     /**
@@ -339,8 +313,7 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void rotateY(float angle) {
-        axisList.add(Axis.Y);
-        angleList.add(angle);
+        rotList.add(new Rotation(Axis.Y, angle));
     }
 
     /**
@@ -349,36 +322,33 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void rotateZ(float angle) {
-        axisList.add(Axis.Z);
-        angleList.add(angle);
+        rotList.add(new Rotation(Axis.Z, angle));
     }
 
     /**
+     * rotList keeps track of all the rotation user calls, and this method
+     * applies all of those rotations to a given vector in the right order, when
+     * called
      *
      * @param v
-     * @return
+     * @return v the calculated vector
      */
     public JVector rotateAll(JVector v) {
-        //axisList and angleList keep track of all the rotation user calls,
-        //and this method applies all of those rotations to a given vector
-        //in the right order, when called, and returns the calculated vector.
-        if (angleList.size() == axisList.size()) {
-            JAxis jaxis = new JAxis();
-            for (int i = 0; i < axisList.size(); i++) {
-                switch (axisList.get(i)) {
-                    case X:
-                        jaxis.rotateX(angleList.get(i));
-                        v.rotateX(jaxis, angleList.get(i));
-                        break;
-                    case Y:
-                        jaxis.rotateX(angleList.get(i));
-                        v.rotateY(jaxis, angleList.get(i));
-                        break;
-                    case Z:
-                        jaxis.rotateX(angleList.get(i));
-                        v.rotateZ(jaxis, angleList.get(i));
-                        break;
-                }
+        JAxis jaxis = new JAxis();
+        for (Rotation rot : rotList) {
+            switch (rot.axis) {
+                case X:
+                    jaxis.rotateX(rot.angle);
+                    v.rotateX(jaxis, rot.angle);
+                    break;
+                case Y:
+                    jaxis.rotateY(rot.angle);
+                    v.rotateY(jaxis, rot.angle);
+                    break;
+                case Z:
+                    jaxis.rotateZ(rot.angle);
+                    v.rotateZ(jaxis, rot.angle);
+                    break;
             }
         }
         return v;
@@ -393,7 +363,7 @@ public class OBJWriter extends PGraphics {
     public String generateString(String s, JVector v) {
         //times -1 to y because Processing's coordinate's y is 
         //inverse of that of sunflow
-        return String.format("%s %f %f %f", s, v.getX(), -1 * v.getY(), v.getZ());
+        return String.format("%s %f %f %f", s, v.x, -1 * v.y, v.z);
     }
 
     private void writeOBJ() {
@@ -551,9 +521,9 @@ public class OBJWriter extends PGraphics {
         ///																		    ///
         if (aspect != 0) {
             JVector sightV = new JVector(eyeX - centerX, eyeY - centerY, eyeZ - centerZ);
-            eyeX = centerX + aspect * sightV.getX();
-            eyeY = -(centerY + aspect * sightV.getY());//minus y because of p5's coord. properties
-            eyeZ = centerZ + aspect * sightV.getZ();
+            eyeX = centerX + aspect * sightV.x;
+            eyeY = -(centerY + aspect * sightV.y);//minus y because of p5's coord. properties
+            eyeZ = centerZ + aspect * sightV.z;
         } else {
             System.out.println("JoonsRender: Please use perspective() before camera()");
             parent.exit();
@@ -585,12 +555,12 @@ public class OBJWriter extends PGraphics {
         }
         if (cameraWriter == null) {
             try {
-                cameraWriter = new PrintWriter(new FileWriter(cameraFile));
+                cameraWriter = new PrintWriter(cameraFile, "UTF-8");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        for (String camline: cameraLines) {
+        for (String camline : cameraLines) {
             cameraWriter.println(camline);
         }
 
@@ -772,7 +742,7 @@ public class OBJWriter extends PGraphics {
         sphereLines.add("   shader DefaultGrey");
         sphereLines.add("   type sphere");
         sphereLines.add("   name sphere" + sphereIndex);
-        sphereLines.add(String.format("   c %f %f %f", c.getX(), -1 * c.getY(), c.getZ())); //times -1 to y because p5's y = sunflow's -y
+        sphereLines.add(String.format("   c %f %f %f", c.x, -1 * c.y, c.z)); //times -1 to y because p5's y = sunflow's -y
         sphereLines.add(String.format("   r %f", r));
         sphereLines.add("}");
         sphereLines.add("");
@@ -795,7 +765,7 @@ public class OBJWriter extends PGraphics {
             try {
                 sphereWriter = new PrintWriter(sphereFile, "UTF-8");
                 try {
-                    for (String sphere: sphereLines) {
+                    for (String sphere : sphereLines) {
                         sphereWriter.println(sphere);
                     }
                 } finally {
@@ -862,18 +832,16 @@ public class OBJWriter extends PGraphics {
     }
 
     /**
-     *
+     * Using stack store more than one push
      */
     @Override
     public void pushMatrix() {
-        if (!pushed) {
-            pushed = true;
-            translationPushed = new JVector(translation.getX(), translation.getY(), translation.getZ());
-            axisListPushed = new ArrayList(axisList);
-            angleListPushed = new ArrayList(angleList);
-        }
+           // translationPushed = new JVector(translation);
+           // pushedList = new ArrayList(rotList);
+            transStack.push(new JVector(translation));
+            rotStack.push(new ArrayList<Rotation>(rotList));
     }
-    
+
     /**
      * Code from DXF export, probably irrelevant here. The default is zero.
      *
@@ -883,35 +851,35 @@ public class OBJWriter extends PGraphics {
     public boolean displayable() {
         return false;  // just in case someone wants to use this on its own
     }
-    
+
     /**
      * Assert this is not a 2D renderer
+     *
      * @return
      */
     @Override
     public boolean is2D() {
         return false;
     }
-    
-     /**
-      * Assert this is a 3D renderer
-      * @return true
-      */
+
+    /**
+     * Assert this is a 3D renderer
+     *
+     * @return true
+     */
     @Override
-    public boolean is3D(){
-        return true;    
+    public boolean is3D() {
+        return true;
     }
 
     /**
-     *
+     * restore Matrix
      */
     @Override
     public void popMatrix() {
-        if (pushed) {
-            pushed = false;
-            translation = translationPushed;
-            axisList = axisListPushed;
-            angleList = angleListPushed;
+        if (!transStack.empty()) {
+            translation = transStack.pop();
+            rotList = rotStack.pop();
         }
     }
 }

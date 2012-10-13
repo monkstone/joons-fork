@@ -1,22 +1,7 @@
 package test;
-/////////////////////////////// joons-renderer library for Processing ///////////////////////////////
-///																					              ///
-/// v0.70
-///
-/// Visit http://code.google.com/p/joons-renderer/
-///
-/// This is my library for bridging p5 and sunflow
-///
-/// OBJWriter is completely insulated from external access, 
-/// so it exports into text file whatever data necessary for other tasks.
-///
-/// SCModifier reads in template SC file, edits it with the data it imports from JoonsRenderer and 
-/// OBJWriter, in text files or in variables, and produces a working version of the scene file.
-/// 
-/// JoonsRenderer is the one which interacts with the end-user, so all the rendering functionalities 
-/// must be made accessible through this class.
-///																					              ///
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * This Applet tests the push pop matrix functionality albeit at single depth
+ */
 
 
 import joons.JoonsRenderer;
@@ -26,10 +11,9 @@ import processing.core.PApplet;
  *
  * @author sid
  */
-public class Cornell extends PApplet {
+public class CornellBox extends PApplet {
 
 	JoonsRenderer jr;
-	boolean rendered = false;
 	
 	////////////////////////////////////camera declaration////////////////////////////////////
 	///																					   ///
@@ -75,7 +59,7 @@ public class Cornell extends PApplet {
      */
     @Override
 	public void draw() {
-
+                if (jr.displaySketch()){
 		beginRecord("joons.OBJWriter", "");// just call like this. Leave the second parameter as "".
 
 		perspective(fov, aspect, zNear, zFar);// use perspective() before camera()!!
@@ -95,8 +79,6 @@ public class Cornell extends PApplet {
 
 		endRecord();
 
-		if (rendered) {
-                jr.display();
             }
 	}
 
@@ -105,7 +87,7 @@ public class Cornell extends PApplet {
      */
     @Override
 	public void keyPressed() {
-		if (key == 'r' || key == 'R' && !rendered) {
+		if (key == 'r' || key == 'R' && jr.displaySketch()) {
 			saveFrame("capture.png");
                         jr.setShader("object0","Blue");
                         jr.setShader("sphere0","Glass");
@@ -119,10 +101,10 @@ public class Cornell extends PApplet {
 			// given names such as sphere0, sphere1, .. 
 			// so have set shader separately for each sphere.
 			jr.setSC("cornell_box.sc");
-			rendered=jr.render("bucket");
+			jr.render("bucket");
 			// render using render("ipr") to render quick and rough,
 			// and render("bucket") to render slow and smooth
-			// if successfully rendered, returns true
+			// if successfully rendered, displays traced image
 		}
 	}
         /**
@@ -130,6 +112,6 @@ public class Cornell extends PApplet {
      * @param args
      */
     public static void main(String[] args){
-            PApplet.main(new String[]{"test.Cornell"});
+            PApplet.main(new String[]{"test.CornellBox"});
         }
 }
