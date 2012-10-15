@@ -145,22 +145,20 @@ public class OBJWriter extends PGraphics {
     }
 
     /**
-     *
+     * this nullifies the current vertices and faces matrices,
+     * so that a new object can have its own coordinates
      */
-    public void refreshVertices() {
-        //this nullifies the current vertices and faces matrices,
-        //so that a new object can have its own coordinates
-        vertices_list = new ArrayList<String>(); // Create an empty ArrayList
-        faces = new ArrayList<String>();
+    public void refreshVertices() {        
+        vertices_list.clear(); 
+        faces.clear();
     }
 
     /**
-     *
+     * only the vertices in between beginShape() are recorded
      * @param kind
      */
     @Override
     public void beginShape(int kind) {
-        // only the vertices in between beginShape() are recorded
         vertexCnt = 0;
         OBJWriteEnabled = true;
         this.kind = kind;
@@ -363,7 +361,7 @@ public class OBJWriter extends PGraphics {
     public String generateString(String s, JVector v) {
         //times -1 to y because Processing's coordinate's y is 
         //inverse of that of sunflow
-        return String.format("%s %f %f %f", s, v.x, -1 * v.y, v.z);
+        return String.format("%s %f %f %f", s, v.getX(), -1 * v.getY(), v.getZ());
     }
 
     private void writeOBJ() {
@@ -521,9 +519,9 @@ public class OBJWriter extends PGraphics {
         ///																		    ///
         if (aspect != 0) {
             JVector sightV = new JVector(eyeX - centerX, eyeY - centerY, eyeZ - centerZ);
-            eyeX = centerX + aspect * sightV.x;
-            eyeY = -(centerY + aspect * sightV.y);//minus y because of p5's coord. properties
-            eyeZ = centerZ + aspect * sightV.z;
+            eyeX = centerX + aspect * sightV.getX();
+            eyeY = -(centerY + aspect * sightV.getY());//minus y because of p5's coord. properties
+            eyeZ = centerZ + aspect * sightV.getZ();
         } else {
             System.out.println("JoonsRender: Please use perspective() before camera()");
             parent.exit();
@@ -717,32 +715,33 @@ public class OBJWriter extends PGraphics {
     }
 
     /**
-     *
+     * Joons implemented the sphere in the external export form,
+     * because sunflow seems to offer an optimized render for a perfect sphere,
+     * meaning no triangle polygonal mess (I wan't to do this for my povwriter 
+     * library)
+             <code>	
+             object {
+             shader Mirror
+             type sphere
+             name mirror
+             c -30 30 20
+             r 20
+             }
+             </code>
      * @param r
      */
     @Override
     public void sphere(float r) {
-        //I've implemented sphere in the external export form,
-        //because sunflow seems to offer an optimized render for a perfect sphere,
-        //meaning no triangle polygonal mess
-		/* template
-         object {
-         shader Mirror
-         type sphere
-         name mirror
-         c -30 30 20
-         r 20
-         }
-         */
+
         JVector c = new JVector(0, 0, 0);
-        //c=rotateAll(c);
+        c = rotateAll(c);
         c = translateAll(c);
 
         sphereLines.add("object {");
         sphereLines.add("   shader DefaultGrey");
         sphereLines.add("   type sphere");
         sphereLines.add("   name sphere" + sphereIndex);
-        sphereLines.add(String.format("   c %f %f %f", c.x, -1 * c.y, c.z)); //times -1 to y because p5's y = sunflow's -y
+        sphereLines.add(String.format("   c %f %f %f", c.getX(), -1 * c.getY(), c.getZ())); //times -1 to y because p5's y = sunflow's -y
         sphereLines.add(String.format("   r %f", r));
         sphereLines.add("}");
         sphereLines.add("");
@@ -828,7 +827,7 @@ public class OBJWriter extends PGraphics {
     @Override
     public void rect(float x, float y, float width, float height) {
         //rect modes are not supported. Use quad.
-        quad(0 + x, 0 + y, width + x, 0 + y, width + x, height + y, 0 + x, height + y);
+        quad(x, y, width + x, y, width + x, height + y, x, height + y);
     }
 
     /**

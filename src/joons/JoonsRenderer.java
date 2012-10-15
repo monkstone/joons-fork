@@ -13,10 +13,13 @@ public class JoonsRenderer {
     //and display it
 
     private PApplet parent;
-    private boolean isActive = true;
     private SunflowRenderer sunflowRenderer;
     private String scFileName, renderFileName;
     private RenderStatus status = RenderStatus.START;
+    private PImage renderResult;
+    /**
+     *
+     */
     protected static String renderFolderName;
     private int width, height;
     private double renderSpeed = 1;
@@ -24,9 +27,9 @@ public class JoonsRenderer {
     private ArrayList<String> objectNames, shaderNames;
     private ArrayList<String> beforeShaderLines, afterShaderLines, afterEverythingLines;
     /**
-     *
+     * Convenience constant for creating file paths
      */
-    public static String SEPARATOR;
+    public static String SEPARATOR = System.getProperty("file.separator");
 
     /**
      *
@@ -36,9 +39,7 @@ public class JoonsRenderer {
      */
     public JoonsRenderer(PApplet parent, int width, int height) {
         this.parent = parent;
-        parent.registerMethod("dispose", this);
-        parent.registerMethod("draw", this);
-        SEPARATOR = System.getProperty("file.separator");
+        setActive();
         sunflowRenderer = new SunflowRenderer();
         renderFolderName = "JoonsWIP";
         renderFileName = "renderWIP.png";
@@ -53,6 +54,17 @@ public class JoonsRenderer {
         beforeShaderLines = new ArrayList<String>();
         afterShaderLines = new ArrayList<String>();
         afterEverythingLines = new ArrayList<String>();
+    }
+
+    private void setActive() {
+        parent.registerMethod("dispose", this);
+        parent.registerMethod("pre", this);
+        parent.registerMethod("draw", this);
+    }
+
+    private void setInactive() {
+        parent.unregisterMethod("pre", this);
+        parent.unregisterMethod("draw", this);
     }
 
     /**
@@ -127,9 +139,8 @@ public class JoonsRenderer {
     /**
      *
      * @param renderType
-     * @return
      */
-    public boolean render(String renderType) {
+    public void render(String renderType) {
         if (status.equals(RenderStatus.START)) {
             status = RenderStatus.TRACING;
             parent.noLoop();
@@ -137,31 +148,39 @@ public class JoonsRenderer {
             parent.loop();
             status = RenderStatus.TRACED;
         }
-        return true;
-    }
-    
-    public boolean displaySketch(){
-        boolean temp = true;
-        if (status.equals(RenderStatus.TRACED)){
-            temp = false;
-        }
-        return temp;
-    
     }
 
     /**
+     * Used to guard the display of the original sketch
      *
+     * @return not traced
+     */
+    public boolean displaySketch() {
+        return !status.equals(RenderStatus.TRACED);
+
+    }
+
+    /**
+     * Called before processing draw
+     */
+    public void pre() {
+        if (status.equals(RenderStatus.TRACED)) {
+            renderResult = parent.loadImage("renderWIP.png");
+            status = RenderStatus.DISPLAYED;
+        }
+    }
+
+    /**
+     * Called at processing draw
      */
     public void draw() {
-        if (status.equals(RenderStatus.TRACED)) {
+        if (status.equals(RenderStatus.DISPLAYED)) {
             parent.background(0);
-            //this is to reset the display before displaying the rendered image
-            PImage renderResult;
-            renderResult = parent.loadImage("renderWIP.png");
             parent.noLights();
             parent.camera();
             parent.perspective();
             parent.image(renderResult, 0, 0, width, height);
+            parent.noLoop();
         }
     }
 
@@ -169,7 +188,7 @@ public class JoonsRenderer {
      *
      */
     public void dispose() {
-        parent.unregisterMethod("draw", this);
-     //   scm.dispose();
+        setInactive();
+        //   scm.dispose();
     }
 }

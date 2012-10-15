@@ -8,9 +8,20 @@ package joons;
  * @author Martin Prout
  */
 public enum RenderStatus {
+    /**
+     *
+     */
     START,
+    /**
+     *
+     */
     TRACING,
-    TRACED
+    /**
+     *
+     */
+    TRACED,
+    
+    DISPLAYED
     
 }
 

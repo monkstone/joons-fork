@@ -2,6 +2,7 @@ package joons;
 
 import joons.util.LUT;
 import static processing.core.PConstants.*;
+
 /**
  *
  * @author Joon Hyub Lee
@@ -11,15 +12,15 @@ public class JVector {
     /**
      *
      */
-    public float x;
+    private float x;
     /**
      *
      */
-    public float y;
+    private float y;
     /**
      *
      */
-    public float z;
+    private float z;
 
     /**
      *
@@ -43,6 +44,30 @@ public class JVector {
         this.x = v.x;
         this.y = v.y;
         this.z = v.z;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final float getX() {
+        return x;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final float getY() {
+        return y;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public final float getZ() {
+        return z;
     }
 
     /**
@@ -155,6 +180,4 @@ public class JVector {
     public float length() {
         return (float) Math.sqrt(x * x + y * y + z * z);
     }
-
-
 }

@@ -1,21 +1,22 @@
 package joons;
 
 /**
- * This class/struct is of minimal design just to hold axis rotation pairs
+ * This class/struct is of minimal design just to hold axis rotation pairs, 
+ * making fields final prevents naughty changes (as if we should be worried)
  * @author Martin Prout
  */
 public class Rotation {
     /**
      *
      */
-    public Axis axis;
+    public final Axis axis;
     /**
      *
      */
-    public float angle;
+    public final float angle;
     
     /**
-     *
+     * Simple Constructor
      * @param axis
      * @param angle
      */

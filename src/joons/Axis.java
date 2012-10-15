@@ -1,5 +1,5 @@
 /*
- * In the original joons package this was a String.
+ * Replaces String used in original joons-renderer.
  */
 package joons;
 
