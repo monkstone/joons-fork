@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,12 +30,12 @@ public class OBJWriter extends PGraphics {
     private File objFile, cameraFile, perspFile, fmFile, sphereFile;
     private String absolutePath, fileName, cameraFileName, perspFileName, fmFileName, sphereFileName;
     private PrintWriter objWriter, cameraWriter, perspWriter, fmWriter, sphereWriter;
-    private ArrayList<String> vertices_list;
-    private ArrayList<String> faces;
-    private ArrayList<Rotation> rotList;     // original had two ArrayLists one Float one String
-    private Stack<ArrayList<Rotation>> rotStack;
+    private List<String> vertices_list;
+    private List<String> faces;
+    private List<Rotation> rotList;     // original had two ArrayLists one Float one String
+    private Stack<List<Rotation>> rotStack;
     private Stack<JVector> transStack;
-    private ArrayList<String> sphereLines;
+    private List<String> sphereLines;
 
     private JVector initVertexVector, translation, oldVertex1, oldVertex2;
     private int kind;
@@ -54,7 +55,7 @@ public class OBJWriter extends PGraphics {
         rotList = new ArrayList<Rotation>();
         translation = new JVector(0, 0, 0);
         sphereLines = new ArrayList<String>();
-        rotStack = new Stack<ArrayList<Rotation>>();
+        rotStack = new Stack<List<Rotation>>();
         transStack = new Stack<JVector>();
 
         LUT.initialize();

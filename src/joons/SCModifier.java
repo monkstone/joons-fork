@@ -2,6 +2,7 @@ package joons;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import processing.core.PApplet;
@@ -14,7 +15,7 @@ public class SCModifier {
 
     PApplet parent;
     private BufferedReader scReader, cameraReader, perspReader, fmReader, sphereReader;
-    private ArrayList<String> scLines, cameraImport, perspImport, fmImport, sphereImport;
+    private List<String> scLines, cameraImport, perspImport, fmImport, sphereImport;
     private String scFilePath, absolutePath;
     private File scFile;
     private PrintWriter scWriter;
