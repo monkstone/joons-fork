@@ -36,7 +36,6 @@ public class OBJWriter extends PGraphics {
     private Stack<List<Rotation>> rotStack;
     private Stack<JVector> transStack;
     private List<String> sphereLines;
-
     private JVector initVertexVector, translation, oldVertex1, oldVertex2;
     private int kind;
     private int vertexCnt;
@@ -146,16 +145,17 @@ public class OBJWriter extends PGraphics {
     }
 
     /**
-     * this nullifies the current vertices and faces matrices,
-     * so that a new object can have its own coordinates
+     * this nullifies the current vertices and faces matrices, so that a new
+     * object can have its own coordinates
      */
-    public void refreshVertices() {        
-        vertices_list.clear(); 
+    public void refreshVertices() {
+        vertices_list.clear();
         faces.clear();
     }
 
     /**
      * only the vertices in between beginShape() are recorded
+     *
      * @param kind
      */
     @Override
@@ -322,6 +322,20 @@ public class OBJWriter extends PGraphics {
     @Override
     public void rotateZ(float angle) {
         rotList.add(new Rotation(Axis.Z, angle));
+    }
+
+    /**
+     * It should be possible to implement this function, however likely to be
+     * only edge case usage by eg ArcBall?
+     *
+     * @param w
+     * @param x
+     * @param y
+     * @param z
+     */
+    @Override
+    public void rotate(float w, float x, float y, float z) {
+        throw new UnsupportedOperationException("not implemented yet");
     }
 
     /**
@@ -716,19 +730,19 @@ public class OBJWriter extends PGraphics {
     }
 
     /**
-     * Joons implemented the sphere in the external export form,
-     * because sunflow seems to offer an optimized render for a perfect sphere,
-     * meaning no triangle polygonal mess (I wan't to do this for my povwriter 
-     * library)
-             <code>	
-             object {
-             shader Mirror
-             type sphere
-             name mirror
-             c -30 30 20
-             r 20
-             }
-             </code>
+     * Joons implemented the sphere in the external export form, because sunflow
+     * seems to offer an optimized render for a perfect sphere, meaning no
+     * triangle polygonal mess (I wan't to do this for my povwriter library)
+     * <code>
+     * object {
+     * shader Mirror
+     * type sphere
+     * name mirror
+     * c -30 30 20
+     * r 20
+     * }
+     * </code>
+     *
      * @param r
      */
     @Override
@@ -836,10 +850,10 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void pushMatrix() {
-           // translationPushed = new JVector(translation);
-           // pushedList = new ArrayList(rotList);
-            transStack.push(new JVector(translation));
-            rotStack.push(new ArrayList<Rotation>(rotList));
+        // translationPushed = new JVector(translation);
+        // pushedList = new ArrayList(rotList);
+        transStack.push(new JVector(translation));
+        rotStack.push(new ArrayList<Rotation>(rotList));
     }
 
     /**
