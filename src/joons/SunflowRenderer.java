@@ -12,7 +12,7 @@ public class SunflowRenderer {
     private SunflowAPI api;
     private ImagePanel imagePanel = new ImagePanel();
     private String scFilePath, renderFilePath, buildTemplate;
-
+    
     /**
      *
      */
@@ -95,4 +95,6 @@ public class SunflowRenderer {
         //saves the rendered image file to the renderFilePath
         imagePanel.save(renderFilePath);
     }
+    
+
 }

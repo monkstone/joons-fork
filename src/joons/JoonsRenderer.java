@@ -6,12 +6,12 @@ import processing.core.PImage;
 
 /**
  *
- * @author Joon Hyub Lee
+ * @author Joon Hyub Lee, modified for processing-2.0 by Martin Prout
  */
 public class JoonsRenderer {
     //this class will write OBJ, will write SC, render it, write PNG file
     //and display it
-
+    static String VERSION = "beta2.0";
     private PApplet parent;
     private SunflowRenderer sunflowRenderer;
     private String scFileName, renderFileName;
@@ -182,6 +182,15 @@ public class JoonsRenderer {
             parent.image(renderResult, 0, 0, width, height);
             parent.noLoop();
         }
+    }
+    
+    /**
+     * Required by processing
+     *
+     * @return version String
+     */
+    public String version() {
+        return VERSION;
     }
 
     /**
