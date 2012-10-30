@@ -325,8 +325,7 @@ public class OBJWriter extends PGraphics {
     }
 
     /**
-     * It should be possible to implement this function, however likely to be
-     * only edge case usage by eg ArcBall?
+     * only usage by ArcBall? Or could I use Quats throughout?
      *
      * @param w
      * @param x
@@ -335,7 +334,7 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void rotate(float w, float x, float y, float z) {
-        throw new UnsupportedOperationException("not implemented yet");
+        rotList.add(new Rotation(Axis.W, new JVector(x, y, z), w));
     }
 
     /**
@@ -361,6 +360,10 @@ public class OBJWriter extends PGraphics {
                 case Z:
                     jaxis.rotateZ(rot.angle);
                     v.rotateZ(jaxis, rot.angle);
+                    break;
+                case W:
+                    jaxis.rotateAxis(rot.getVector(), rot.angle);
+                    v.rotateVector(rot.getVector(), rot.angle);                   
                     break;
             }
         }

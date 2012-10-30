@@ -1,4 +1,4 @@
-package test;
+
 /**
  * This Applet tests the push pop matrix functionality albeit at single depth
  */
@@ -112,6 +112,6 @@ public class CornellBox extends PApplet {
      * @param args
      */
     public static void main(String[] args){
-            PApplet.main(new String[]{"test.CornellBox"});
+            PApplet.main(new String[]{"CornellBox"});
         }
 }

@@ -19,6 +19,11 @@ public enum Axis {
     /**
      * The Z axis (sunflow version is up)
      */
-    Z    
+    Z,
+    /**
+     * Non standard Axis
+     */
+    
+    W
 }
 
