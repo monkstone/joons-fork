@@ -11,7 +11,7 @@ import processing.core.PImage;
 public class JoonsRenderer {
     //this class will write OBJ, will write SC, render it, write PNG file
     //and display it
-    static String VERSION = "beta2.0";
+    static String VERSION = "0.02";
     private PApplet parent;
     private SunflowRenderer sunflowRenderer;
     private String scFileName, renderFileName;
@@ -21,7 +21,7 @@ public class JoonsRenderer {
      *
      */
     protected static String renderFolderName;
-    private int width, height;
+    private final int width, height;
     private double renderSpeed = 1;
     private SCModifier scm;
     private ArrayList<String> objectNames, shaderNames;
@@ -30,6 +30,15 @@ public class JoonsRenderer {
      * Convenience constant for creating file paths
      */
     public static String SEPARATOR = System.getProperty("file.separator");
+    
+    /**
+     * Simpler constructor
+     * @param parent 
+     */
+    
+    public JoonsRenderer(PApplet parent) {
+        this(parent, parent.width, parent.height);
+    }
 
     /**
      *

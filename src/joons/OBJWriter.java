@@ -303,7 +303,7 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void rotateX(float angle) {
-        rotList.add(new Rotation(Axis.X, angle));
+        rotate(angle, 1.0f, 0, 0);
     }
 
     /**
@@ -312,7 +312,7 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void rotateY(float angle) {
-        rotList.add(new Rotation(Axis.Y, angle));
+        rotate(angle, 0, 1.0f, 0);
     }
 
     /**
@@ -321,11 +321,11 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void rotateZ(float angle) {
-        rotList.add(new Rotation(Axis.Z, angle));
+        rotate(angle, 0, 0, 1.0f);
     }
 
     /**
-     * only usage by ArcBall? Or could I use Quats throughout?
+     * Rotate function about arbitary axis
      *
      * @param w
      * @param x
@@ -334,7 +334,7 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void rotate(float w, float x, float y, float z) {
-        rotList.add(new Rotation(Axis.W, new JVector(x, y, z), w));
+        rotList.add(new Rotation(w, x, y, z));
     }
 
     /**
@@ -348,24 +348,8 @@ public class OBJWriter extends PGraphics {
     public JVector rotateAll(JVector v) {
         JAxis jaxis = new JAxis();
         for (Rotation rot : rotList) {
-            switch (rot.axis) {
-                case X:
-                    jaxis.rotateX(rot.angle);
-                    v.rotateX(jaxis, rot.angle);
-                    break;
-                case Y:
-                    jaxis.rotateY(rot.angle);
-                    v.rotateY(jaxis, rot.angle);
-                    break;
-                case Z:
-                    jaxis.rotateZ(rot.angle);
-                    v.rotateZ(jaxis, rot.angle);
-                    break;
-                case W:
-                    jaxis.rotateAxis(rot.getVector(), rot.angle);
-                    v.rotateVector(rot.getVector(), rot.angle);                   
-                    break;
-            }
+            jaxis.rotateAxis(rot.getVector(), rot.w);
+            v.rotateVector(rot.getVector(), rot.w);
         }
         return v;
     }

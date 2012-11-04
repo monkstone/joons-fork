@@ -8,44 +8,52 @@ package joons;
  */
 public class Rotation {
 
-    /**
-     *
-     */
-    public final Axis axis;
-    /**
-     *
-     */
-    public final float angle;
-    public final JVector vect;
 
+    /**
+     * Angle of rotation
+     */
+    public final float w,
+    /**
+     * Originally x axis
+     */
+    x,
+    /**
+     * Originally y axis
+     */
+    y,
+    /**
+     * Originally z axis
+     */
+    z;
+
+
+    /**
+     *
+     */
     public Rotation() {
-        this(Axis.W, new JVector(0, 0, 0), 0f);
+        this(0, 0, 0, 0);
     }
 
     /**
-     * Simple Constructor
      *
-     * @param axis
-     * @param angle
+     * @param w
+     * @param x
+     * @param y
+     * @param z
      */
-    public Rotation(Axis axis, float angle) {
-        this(axis, new JVector(0, 0, 0), angle);
+    public Rotation(float w, float x, float y, float z) {
+        this.w = w;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
+
 
     /**
-     * Constructor with vector
-     *
-     * @param axis
-     * @param vect
-     * @param angle
+     * Convenience function create new JVector (better than storing?)
+     * @return
      */
-    public Rotation(Axis axis, JVector vect, float angle) {
-        this.axis = axis;
-        this.angle = angle;
-        this.vect = vect;
-    }
-
     public JVector getVector() {
-        return vect;
+        return new JVector(x, y, z);
     }
 }
