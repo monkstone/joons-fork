@@ -9,8 +9,6 @@
  */
 package joons.util;
 
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import processing.core.PApplet;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
@@ -194,8 +192,8 @@ public class ArcBall {
      */
     public void applyQuaternion2Matrix(JQuat q) {
         // instead of transforming q into a matrix and applying it...
-        float[] aa = q.getValue();
-        parent.rotate(aa[0], aa[1], aa[2], aa[3]);
+        double[] aa = q.getValue();
+        parent.rotate((float)aa[0], (float)aa[1], (float)aa[2], (float)aa[3]);
     }
 
     /**

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import joons.util.LUT;
 import static processing.core.PConstants.*;
 import processing.core.PGraphics;
 import processing.core.PShape;
@@ -44,9 +43,10 @@ public class OBJWriter extends PGraphics {
     private float aspect = 0;
     boolean OBJWriteEnabled = false;
     final String VECT = "v";
+    final double ROT_AXIS = 1.0;
 
     /**
-     * Constructor initializes lists LUT etc
+     * Constructor
      */
     public OBJWriter() {
         vertices_list = new ArrayList<String>(); // Create an empty ArrayList
@@ -57,7 +57,6 @@ public class OBJWriter extends PGraphics {
         rotStack = new Stack<List<Rotation>>();
         transStack = new Stack<JVector>();
 
-        LUT.initialize();
         fileName = "object" + objectIndex + ".obj";
         cameraFileName = "CameraExport.txt";
         perspFileName = "PerspectiveExport.txt";
@@ -132,7 +131,8 @@ public class OBJWriter extends PGraphics {
 
     /**
      * This method is a bit of hack, and is used to generate separate objects.
-     * The writes objects to separate files
+     * The writes objects to separate files (but it messes with display needs a
+     * good fix)
      */
     @Override
     public void noSmooth() {
@@ -143,6 +143,7 @@ public class OBJWriter extends PGraphics {
         setPath(absolutePath);
         beginDraw();
     }
+
 
     /**
      * this nullifies the current vertices and faces matrices, so that a new
@@ -303,7 +304,7 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void rotateX(float angle) {
-        rotate(angle, 1.0f, 0, 0);
+        rotate(angle, ROT_AXIS, 0, 0);
     }
 
     /**
@@ -312,7 +313,7 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void rotateY(float angle) {
-        rotate(angle, 0, 1.0f, 0);
+        rotate(angle, 0, ROT_AXIS, 0);
     }
 
     /**
@@ -321,7 +322,7 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void rotateZ(float angle) {
-        rotate(angle, 0, 0, 1.0f);
+        rotate(angle, 0, 0, ROT_AXIS);
     }
 
     /**
@@ -334,6 +335,10 @@ public class OBJWriter extends PGraphics {
      */
     @Override
     public void rotate(float w, float x, float y, float z) {
+        rotList.add(new Rotation(w, x, y, z));
+    }
+
+    public void rotate(double w, double x, double y, double z) {
         rotList.add(new Rotation(w, x, y, z));
     }
 
@@ -363,7 +368,7 @@ public class OBJWriter extends PGraphics {
     public String generateString(String s, JVector v) {
         //times -1 to y because Processing's coordinate's y is 
         //inverse of that of sunflow
-        return String.format("%s %f %f %f", s, v.getX(), -1 * v.getY(), v.getZ());
+        return String.format("%s %.6f %.6f %.6f", s, v.getX(), -1 * v.getY(), v.getZ());
     }
 
     private void writeOBJ() {
@@ -521,9 +526,9 @@ public class OBJWriter extends PGraphics {
         ///																		    ///
         if (aspect != 0) {
             JVector sightV = new JVector(eyeX - centerX, eyeY - centerY, eyeZ - centerZ);
-            eyeX = centerX + aspect * sightV.getX();
-            eyeY = -(centerY + aspect * sightV.getY());//minus y because of p5's coord. properties
-            eyeZ = centerZ + aspect * sightV.getZ();
+            eyeX = (float) (centerX + aspect * sightV.getX());
+            eyeY = (float) -(centerY + aspect * sightV.getY());//minus y because of p5's coord. properties
+            eyeZ = (float) (centerZ + aspect * sightV.getZ());
         } else {
             System.out.println("JoonsRender: Please use perspective() before camera()");
             parent.exit();
@@ -793,7 +798,7 @@ public class OBJWriter extends PGraphics {
         float th = 2 * PI / n; //the circle will be represented by a 30-sided polygon
         beginShape();
         for (int i = 0; i <= n; i++) {
-            vertex(x + width * LUT.cos(th * i) / 2, y + height * LUT.sin(th * i) / 2);
+            vertex((float) (x + width * Math.cos(th * i) / 2), (float) (y + height * Math.sin(th * i) / 2));
         }
         endShape();
     }
@@ -841,6 +846,16 @@ public class OBJWriter extends PGraphics {
         // pushedList = new ArrayList(rotList);
         transStack.push(new JVector(translation));
         rotStack.push(new ArrayList<Rotation>(rotList));
+    }
+
+    /**
+     * A radical untested implementation, I've no idea of consequences, but it
+     * might just behave, I don't see any use for it.
+     */
+    @Override
+    public void resetMatrix() {
+        transStack.clear();
+        rotStack.clear();
     }
 
     /**

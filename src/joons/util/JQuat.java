@@ -21,7 +21,7 @@ package joons.util;
  */
 public final class JQuat {
 
-    private float w, x, y, z;
+    private double w, x, y, z;
 
     /**
      * 
@@ -37,7 +37,7 @@ public final class JQuat {
      * @param y
      * @param z
      */
-    public JQuat(float w, float x, float y, float z) {
+    public JQuat(double w, double x, double y, double z) {
         this.w = w;
         this.x = x;
         this.y = y;
@@ -59,7 +59,7 @@ public final class JQuat {
      * @param w scalar 
      * @param v custom Vector class
      */
-    public void set(float w, AVector v) {
+    public void set(double w, AVector v) {
         this.w = w;
         x = v.x;
         y = v.y;
@@ -84,25 +84,25 @@ public final class JQuat {
      * @return
      */
     public static JQuat mult(JQuat q1, JQuat q2) {
-        float w = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
-        float x = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
-        float y = q1.w * q2.y + q1.y * q2.w + q1.z * q2.x - q1.x * q2.z;
-        float z = q1.w * q2.z + q1.z * q2.w + q1.x * q2.y - q1.y * q2.x;
+        double w = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
+        double x = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
+        double y = q1.w * q2.y + q1.y * q2.w + q1.z * q2.x - q1.x * q2.z;
+        double z = q1.w * q2.z + q1.z * q2.w + q1.x * q2.y - q1.y * q2.x;
         return new JQuat(w, x, y, z);
     }
     
     /**
      * Transform this iernion into an angle (radians) and an axis vector, about 
      * which to rotate (avoids NaN by setting sa to 1.0F when sa < epsilon)
-     * @return a new float[] where a0 = angle and a1 .. a3 are axis vector
+     * @return a new double[] where a0 = angle and a1 .. a3 are axis vector
      */
 
-    public float[] getValue() {
-        float sa = (float) Math.sqrt(1.0 - w * w);
+    public double[] getValue() {
+        double sa = Math.sqrt(1.0 - w * w);
         if (sa < processing.core.PConstants.EPSILON) {
             sa = 1.0f;
         }
-        return new float[]{(float)Math.acos(w) * 2.0f, x / sa, y / sa, z / sa};
+        return new double[]{Math.acos(w) * 2.0f, x / sa, y / sa, z / sa};
     }
 }
 

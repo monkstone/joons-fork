@@ -1,6 +1,6 @@
 package joons;
 
-import joons.util.LUT;
+
 import static processing.core.PConstants.*;
 
 /**
@@ -12,15 +12,15 @@ public class JVector {
     /**
      *
      */
-    private float x;
+    private double x;
     /**
      *
      */
-    private float y;
+    private double y;
     /**
      *
      */
-    private float z;
+    private double z;
 
     /**
      *
@@ -28,11 +28,10 @@ public class JVector {
      * @param y
      * @param z
      */
-    public JVector(float x, float y, float z) {
+    public JVector(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
-        LUT.initialize();
     }
 
     /**
@@ -50,7 +49,7 @@ public class JVector {
      *
      * @return
      */
-    public final float getX() {
+    public final double getX() {
         return x;
     }
 
@@ -58,7 +57,7 @@ public class JVector {
      *
      * @return
      */
-    public final float getY() {
+    public final double getY() {
         return y;
     }
 
@@ -66,7 +65,7 @@ public class JVector {
      *
      * @return
      */
-    public final float getZ() {
+    public final double getZ() {
         return z;
     }
 
@@ -74,7 +73,7 @@ public class JVector {
      *
      * @param x
      */
-    public void addX(float x) {
+    public void addX(double x) {
         this.x += x;
     }
 
@@ -82,7 +81,7 @@ public class JVector {
      *
      * @param y
      */
-    public void addY(float y) {
+    public void addY(double y) {
         this.y += y;
     }
 
@@ -90,7 +89,7 @@ public class JVector {
      *
      * @param z
      */
-    public void addZ(float z) {
+    public void addZ(double z) {
         this.z += z;
     }
 
@@ -108,17 +107,17 @@ public class JVector {
      * @param u
      * @param th
      */
-    public void rotateVector(JVector u, float th) {
+    public void rotateVector(JVector u, double th) {
         //this method rotates this vector about the u vector by the angle th.//
         ///////////////////////////////////////////////////////////////////////  
 
-        float ux = u.x;
-        float uy = u.y;
-        float uz = u.z;
-        float vlengthBefore = (float) Math.sqrt(x * x + y * y + z * z);
+        double ux = u.x;
+        double uy = u.y;
+        double uz = u.z;
+        double vlengthBefore = Math.sqrt(x * x + y * y + z * z);
 
         //normalizing the u vector
-        float ulength = (float) Math.sqrt(ux * ux + uy * uy + uz * uz);
+        double ulength = Math.sqrt(ux * ux + uy * uy + uz * uz);
         if (ulength < EPSILON) {
             ulength = 1.0f;
         }
@@ -127,12 +126,12 @@ public class JVector {
         uz = uz / ulength;
 
         //actual rotation calculation
-        float xprime = (ux * ux + (1 - ux * ux) * LUT.cos(th)) * x + (ux * uy * (1 - LUT.cos(th)) - uz * LUT.sin(th)) * y + (ux * uz * (1 - LUT.cos(th)) + uy * LUT.sin(th)) * z;
-        float yprime = (ux * uy * (1 - LUT.cos(th)) + uz * LUT.sin(th)) * x + (uy * uy + (1 - uy * uy) * LUT.cos(th)) * y + (uy * uz * (1 - LUT.cos(th)) - ux * LUT.sin(th)) * z;
-        float zprime = (ux * uz * (1 - LUT.cos(th)) - uy * LUT.sin(th)) * x + (uy * uz * (1 - LUT.cos(th)) + ux * LUT.sin(th)) * y + (uz * uz + (1 - uz * uz) * LUT.cos(th)) * z;
+        double xprime = (ux * ux + (1 - ux * ux) * Math.cos(th)) * x + (ux * uy * (1 - Math.cos(th)) - uz * Math.sin(th)) * y + (ux * uz * (1 - Math.cos(th)) + uy * Math.sin(th)) * z;
+        double yprime = (ux * uy * (1 - Math.cos(th)) + uz * Math.sin(th)) * x + (uy * uy + (1 - uy * uy) * Math.cos(th)) * y + (uy * uz * (1 - Math.cos(th)) - ux * Math.sin(th)) * z;
+        double zprime = (ux * uz * (1 - Math.cos(th)) - uy * Math.sin(th)) * x + (uy * uz * (1 - Math.cos(th)) + ux * Math.sin(th)) * y + (uz * uz + (1 - uz * uz) * Math.cos(th)) * z;
 
         //seeing if the above calculation has reduced or enlarged the length due to calculation inaccuracies, and compensating
-        float vlengthAfter = (float) Math.sqrt(xprime * xprime + yprime * yprime + zprime * zprime);
+        double vlengthAfter = Math.sqrt(xprime * xprime + yprime * yprime + zprime * zprime);
 
         if (vlengthAfter > EPSILON) {
             xprime = xprime * vlengthBefore / vlengthAfter;
@@ -146,38 +145,12 @@ public class JVector {
         this.z = zprime;
     }
 
-    /**
-     *
-     * @param jaxis
-     * @param th
-     */
-    public void rotateX(JAxis jaxis, float th) {
-        rotateVector(jaxis.getXAxis(), th);
-    }
-
-    /**
-     *
-     * @param jaxis
-     * @param th
-     */
-    public void rotateY(JAxis jaxis, float th) {
-        rotateVector(jaxis.getYAxis(), th);
-    }
-
-    /**
-     *
-     * @param jaxis
-     * @param th
-     */
-    public void rotateZ(JAxis jaxis, float th) {
-        rotateVector(jaxis.getZAxis(), th);
-    }
 
     /**
      *
      * @return
      */
-    public float length() {
-        return (float) Math.sqrt(x * x + y * y + z * z);
+    public double length() {
+        return Math.sqrt(x * x + y * y + z * z);
     }
 }

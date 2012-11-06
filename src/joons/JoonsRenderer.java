@@ -11,7 +11,7 @@ import processing.core.PImage;
 public class JoonsRenderer {
     //this class will write OBJ, will write SC, render it, write PNG file
     //and display it
-    static String VERSION = "0.02";
+    static String VERSION = "0.2";
     private PApplet parent;
     private SunflowRenderer sunflowRenderer;
     private String scFileName, renderFileName;

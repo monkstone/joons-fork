@@ -2,8 +2,8 @@
 
 
 /**
- *
- * @author Joon Hyub Lee
+ * The original axis as three vectors
+ * @author Joon Hyub Lee, simplified by Martin Prout
  */
 public class JAxis{
   
@@ -21,44 +21,15 @@ public class JAxis{
      * @param u
      * @param th
      */
-    public void rotateAxis(JVector u, float th){
+    public void rotateAxis(JVector u, double th){
     ox.rotateVector(u,th);
     oy.rotateVector(u,th);
     oz.rotateVector(u,th);
-  }
-  
+  } 
+    
+
     /**
-     *
-     * @param th
-     */
-    public void rotateX(float th){
-    ox.rotateVector(ox,th);
-    oy.rotateVector(ox,th);
-    oz.rotateVector(ox,th);
-  }
-  
-    /**
-     *
-     * @param th
-     */
-    public void rotateY(float th){
-    ox.rotateVector(oy,th);
-    oy.rotateVector(oy,th);
-    oz.rotateVector(oy,th);
-  }
-  
-    /**
-     *
-     * @param th
-     */
-    public void rotateZ(float th){
-    ox.rotateVector(oz,th);
-    oy.rotateVector(oz,th);
-    oz.rotateVector(oz,th);
-  }
-  
-    /**
-     *
+     * 
      * @return
      */
     public JVector getXAxis(){return this.ox;}

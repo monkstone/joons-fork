@@ -10,13 +10,13 @@ public class Rotation {
 
 
     /**
-     * Angle of rotation
+     * Angle of rotation need to be public can be final
      */
-    public final float w,
+    public final double w;
     /**
-     * Originally x axis
+     * Originally vector in x-axis
      */
-    x,
+   private final double x,
     /**
      * Originally y axis
      */
@@ -31,7 +31,7 @@ public class Rotation {
      *
      */
     public Rotation() {
-        this(0, 0, 0, 0);
+        this(0, 0, 1.0f, 0);
     }
 
     /**
@@ -41,7 +41,7 @@ public class Rotation {
      * @param y
      * @param z
      */
-    public Rotation(float w, float x, float y, float z) {
+    public Rotation(double w, double x, double y, double z) {
         this.w = w;
         this.x = x;
         this.y = y;
