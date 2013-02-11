@@ -1,11 +1,6 @@
 /**
  * The purpose of this library is to allow the export of processing sketches 
- * to PovRAY Copyright (C) 2012 Martin Prout This library is free
- * software; you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation;
- * either version 2.1 of the License, or (at your option) any later version.
- *
- * Obtain a copy of the license at http://www.gnu.org/licenses/lgpl-2.1.html
+ * to sunflow (C) 2013 Martin Prout 
  */
 package joons.util;
 
@@ -31,6 +26,7 @@ public class ArcBall {
     private JQuat q_down;
     private JQuat q_drag;
     private AVector[] axisSet;
+    private float zoom;
     private Constrain axis;
     private boolean isActive = false;
     private final PApplet parent;
@@ -68,29 +64,35 @@ public class ArcBall {
     public ArcBall(final PApplet parent) {
         this(parent, parent.width * 0.5F, parent.height * 0.5F, Math.min(parent.width, parent.height) * 0.5F);
     }
+       
     
-    
-
     /**
      * mouse event to register
      *
      * @param e
      */
-    public void mouseEvent(processing.event.MouseEvent e) {
+    public void mouseEvent(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
         switch (e.getAction()) {
-            case (MouseEvent.PRESSED):
+            case (MouseEvent.PRESS):
                 v_down = mouse2sphere(x, y);
                 q_down.set(q_now);
                 q_drag.reset();
                 break;
-            case (MouseEvent.DRAGGED):
+            case (MouseEvent.DRAG):
                 v_drag = mouse2sphere(x, y);
                 q_drag.set(AVector.dot(v_down, v_drag), v_down.cross(v_drag));
                 break;
+//            case (MouseEvent.WHEEL):          // might not be possible
+//                handleWheel(e.getAmount());
+//                break;
             default:
         }
+    }
+
+    public void handleWheel(float delta) {
+        zoom += delta * 0.05f;
     }
 
     /**
@@ -99,7 +101,7 @@ public class ArcBall {
      * @param e
      */
     public void keyEvent(processing.event.KeyEvent e) {
-        if (e.getAction() == KeyEvent.PRESSED) {
+        if (e.getAction() == KeyEvent.PRESS) {
             switch (e.getKey()) {
                 case 'x':
                     constrain(Constrain.XAXIS);
@@ -112,7 +114,7 @@ public class ArcBall {
                     break;
             }
         }
-        if (e.getAction() == KeyEvent.RELEASED) {
+        if (e.getAction() == KeyEvent.RELEASE) {
             constrain(Constrain.FREE);
         }
     }
@@ -144,6 +146,7 @@ public class ArcBall {
     public void update() {
         q_now = JQuat.mult(q_drag, q_down);
         applyQuaternion2Matrix(q_now);
+      //  this.parent.scale(zoom);   //might not be possible
     }
 
     /**
