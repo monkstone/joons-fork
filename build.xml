@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="joons" default="jar">
+
+    <!-- Basic targets -->
+  <target name="init">
+    <property name="source" value="1.6" />
+    <property name="srcdir" value="src" />
+    <property name="builddir" value="build" />
+    <property name="distdir" value="dist" />
+    <property name="classpath" value="classpath" />
+  </target>
+
+  <target name="clean" depends="init" description="Remove build files created by this script">
+    <delete dir="${builddir}" />
+    <delete dir="${distdir}" />
+  </target>
+
+    <!-- compile source -->
+  <target name="compile" depends="init" description="Compile source">
+    <mkdir dir="${builddir}" />
+    <javac srcdir="${srcdir}" destdir="${builddir}" source="${source}" target="${source}" includeantruntime="false">
+      <compilerarg value="-Xlint:unchecked" />
+      <classpath>
+      <pathelement path="classpath"/>
+      <fileset dir="lib">
+        <include name="**/*.jar"/>
+      </fileset>
+    </classpath>
+    </javac>
+  </target>
+
+  <!-- jar classes -->
+  <target name="jar" depends="compile" description="Create jar file">
+    <mkdir dir="${distdir}" />
+    <jar jarfile="${distdir}/joons.jar" basedir="${builddir}"/>
+  </target>
+</project>

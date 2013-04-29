@@ -2,11 +2,9 @@ package joons;
 
 //TODO gotta put the methods in the right order, in relevant groups
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -144,7 +142,6 @@ public class OBJWriter extends PGraphics {
         beginDraw();
     }
 
-
     /**
      * this nullifies the current vertices and faces matrices, so that a new
      * object can have its own coordinates
@@ -257,7 +254,53 @@ public class OBJWriter extends PGraphics {
     @Override
     public void shape(PShape sh) {
         if (OBJWriteEnabled && sh.is3D()) {
-            throw new UnsupportedOperationException("not implemented");
+            if (sh.getKind() == PShape.SPHERE) {
+                float r = sh.getWidth() / 2.0f;
+                JVector c = new JVector(0, 0, 0);
+                c = rotateAll(c);
+                c = translateAll(c);
+
+                sphereLines.add("object {");
+                sphereLines.add("   shader DefaultGrey");
+                sphereLines.add("   type sphere");
+                sphereLines.add("   name sphere" + sphereIndex);
+                sphereLines.add(String.format("   c %f %f %f", c.getX(), -1 * c.getY(), c.getZ())); //times -1 to y because p5's y = sunflow's -y
+                sphereLines.add(String.format("   r %f", r));
+                sphereLines.add("}");
+                sphereLines.add("");
+
+                sphereIndex++;
+
+                String fpath = absolutePath + sphereFileName;
+
+                if (fpath != null) {
+                    sphereFile = new File(fpath);
+                    if (!sphereFile.isAbsolute()) {
+                        sphereFile = null;
+                    }
+                }
+                if (sphereFile == null) {
+                    throw new RuntimeException("OBJExport requires an absolute path "
+                            + "for the location of the output objFile.");
+                }
+                if (sphereWriter == null) {
+                    try {
+                        sphereWriter = new PrintWriter(sphereFile, "UTF-8");
+                        try {
+                            for (String sphere : sphereLines) {
+                                sphereWriter.println(sphere);
+                            }
+                        } finally {
+                            sphereWriter.flush();
+                            sphereWriter.close();
+                            sphereWriter = null;
+                        }
+                    } catch (IOException ex) {
+                        Logger.getLogger(OBJWriter.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+            //throw new UnsupportedOperationException("not implemented");
             //OBJWriteEnabled = false;
         }
     }
@@ -338,6 +381,13 @@ public class OBJWriter extends PGraphics {
         rotList.add(new Rotation(w, x, y, z));
     }
 
+    /**
+     *
+     * @param w
+     * @param x
+     * @param y
+     * @param z
+     */
     public void rotate(double w, double x, double y, double z) {
         rotList.add(new Rotation(w, x, y, z));
     }
@@ -386,7 +436,7 @@ public class OBJWriter extends PGraphics {
      */
     public void fileMeshExport() {
         //this writes the fileMeshExport.txt
-        ArrayList<String> fmLines = new ArrayList<String>();
+        List<String> fmLines = new ArrayList<String>();
         ArrayList<String> objLines; // = new ArrayList<String>();
 
         for (int i = 0; i <= objectIndex; i++) {
@@ -421,9 +471,7 @@ public class OBJWriter extends PGraphics {
                     fmWriter.close();
                     fmWriter = null;
                 }
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(OBJWriter.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnsupportedEncodingException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(OBJWriter.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -713,9 +761,7 @@ public class OBJWriter extends PGraphics {
                     sphereWriter.close();
                     sphereWriter = null;
                 }
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(OBJWriter.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnsupportedEncodingException ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(OBJWriter.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
