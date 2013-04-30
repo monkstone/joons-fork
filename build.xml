@@ -6,6 +6,7 @@
 		<property name="source" value="1.6" />
 		<property name="srcdir" value="src" />
 		<property name="builddir" value="build" />
+		<property name="docsdir" value="reference" />
 		<property name="distdir" value="joons/library" />
 		<property name="classpath" value="classpath" />
 	</target>
@@ -28,12 +29,27 @@
 			</classpath>
 		</javac>
 	</target>
+	
+  <!-- create javadocs -->
+	<target name="reference" depends="compile" description="Compile source">
+		<mkdir dir="${docsdir}" />
+		<javadoc destdir="${docsdir}">
+      <fileset dir="${srcdir}" defaultexcludes="yes"/>
+    </javadoc>
+	</target>
+	
 
   <!-- jar classes -->
-	<target name="library" depends="compile" description="Create jar file">
+	<target name="library" depends="reference" description="Create jar file">
 		<mkdir dir="${distdir}" />
 		<jar jarfile="${distdir}/joons.jar" basedir="${builddir}"/>
     <copy file="lib/sunflow.jar" todir="${distdir}"/>
     <copy file="lib/janino.jar" todir="${distdir}"/>
+    <copy todir="${distdir}">
+      <fileset dir="examples"/>
+    </copy>
+    <copy todir="${distdir}">
+      <fileset dir="reference"/>
+    </copy>
 	</target>
 </project>
