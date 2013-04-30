@@ -1,3 +1,5 @@
-/nbproject/private/
-/build/
-/dist/
+*.*~
+*.jar
+*.class
+joons/library
+build
