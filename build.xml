@@ -2,54 +2,56 @@
 <project name="joons" default="library">
 
     <!-- Basic targets -->
-	<target name="init">
-		<property name="source" value="1.6" />
-		<property name="srcdir" value="src" />
-		<property name="builddir" value="build" />
-		<property name="docsdir" value="reference" />
-		<property name="distdir" value="joons/library" />
-		<property name="classpath" value="classpath" />
-	</target>
-
-	<target name="clean" depends="init" description="Remove build files created by this script">
-		<delete dir="${builddir}" />
-		<delete dir="${distdir}" />
-	</target>
+  <target name="init">
+    <property name="source" value="1.6" />
+    <property name="srcdir" value="src" />
+    <property name="builddir" value="build" />
+    <property name="docsdir" value="reference" />
+    <property name="distdir" value="joons" />
+    <property name="libdir" value="joons/library" />
+    <property name="classpath" value="classpath" />
+  </target>
+	
+  <target name="clean" depends="init" description="Remove build files created by this script">
+    <delete dir="${builddir}" />
+    <delete dir="${distdir}" />
+  </target>
 
     <!-- compile source -->
-	<target name="compile" depends="init" description="Compile source">
-		<mkdir dir="${builddir}" />
-		<javac srcdir="${srcdir}" destdir="${builddir}" source="${source}" target="${source}" includeantruntime="false">
-			<compilerarg value="-Xlint:unchecked" />
-			<classpath>
-				<pathelement path="classpath"/>
-				<fileset dir="lib">
-					<include name="**/*.jar"/>
-				</fileset>
-			</classpath>
-		</javac>
-	</target>
+  <target name="compile" depends="init" description="Compile source">
+    <mkdir dir="${builddir}" />
+    <javac srcdir="${srcdir}" destdir="${builddir}" source="${source}" target="${source}" includeantruntime="false">
+      <compilerarg value="-Xlint:unchecked" />
+      <classpath>
+        <pathelement path="classpath"/>
+        <fileset dir="lib">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
+  </target>
 	
   <!-- create javadocs -->
-	<target name="reference" depends="compile" description="Compile source">
-		<mkdir dir="${docsdir}" />
-		<javadoc destdir="${docsdir}">
+  <target name="reference" depends="compile" description="Compile source">
+    <mkdir dir="${docsdir}" />
+    <javadoc destdir="${docsdir}">
       <fileset dir="${srcdir}" defaultexcludes="yes"/>
     </javadoc>
-	</target>
+  </target>
 	
 
   <!-- jar classes -->
-	<target name="library" depends="reference" description="Create jar file">
-		<mkdir dir="${distdir}" />
-		<jar jarfile="${distdir}/joons.jar" basedir="${builddir}"/>
-    <copy file="lib/sunflow.jar" todir="${distdir}"/>
-    <copy file="lib/janino.jar" todir="${distdir}"/>
-    <copy todir="${distdir}">
+  <target name="library" depends="reference" description="Create jar file">
+    <mkdir dir="${libdir}" />
+    <jar jarfile="${libdir}/joons.jar" basedir="${builddir}"/>
+    <copy file="lib/sunflow.jar" todir="${libdir}"/>
+    <copy file="lib/janino.jar" todir="${libdir}"/>
+    <copy file="library.properties" todir="${distdir}"/>
+    <copy todir="${distdir}/examples">
       <fileset dir="examples"/>
     </copy>
-    <copy todir="${distdir}">
+    <copy todir="${distdir}/reference">
       <fileset dir="reference"/>
     </copy>
-	</target>
+  </target>
 </project>
