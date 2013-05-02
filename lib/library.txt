@@ -1,7 +1,0 @@
-core.jar
-sunflow.jar
-janino.jar
-jogl-all.jar
-gluegen.jar
-(runtime jars may be also reqd)
-
