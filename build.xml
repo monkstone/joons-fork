@@ -10,7 +10,18 @@
     <property name="distdir" value="joons" />
     <property name="libdir" value="joons/library" />
     <property name="classpath" value="classpath" />
+    
+    <fail message="NB: You need to put files listed in lib/README.md in the lib folder">
+      <condition>
+        <not>
+          <resourcecount count="4">
+            <fileset id="fs" dir="lib" includes="README.md,core.jar,janino.jar,sunflow.jar" />
+          </resourcecount>
+        </not>
+      </condition>
+    </fail> 
   </target>
+  
 	
   <target name="clean" depends="init" description="Remove build files created by this script">
     <delete dir="${builddir}" />
@@ -31,13 +42,20 @@
     </javac>
   </target>
 	
-  <!-- create javadocs -->
-  <target name="reference" depends="compile" description="Compile source">
+<!-- create javadocs -->
+  <target name="reference" depends="compile" description="Create javadocs">
     <mkdir dir="${docsdir}" />
     <javadoc destdir="${docsdir}">
       <fileset dir="${srcdir}" defaultexcludes="yes"/>
+      <classpath>
+        <pathelement path="classpath"/>
+        <fileset dir="lib">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
     </javadoc>
   </target>
+	
 	
 
   <!-- jar classes -->
