@@ -42,6 +42,7 @@ public class ArcBall {
      */
     public ArcBall(final PApplet parent, float center_x, float center_y, float radius) {
         this.parent = parent;
+        this.zoom = 1.0f;
         this.parent.registerMethod("dispose", this);
         this.center_x = center_x;
         this.center_y = center_y;
@@ -84,9 +85,9 @@ public class ArcBall {
                 v_drag = mouse2sphere(x, y);
                 q_drag.set(AVector.dot(v_down, v_drag), v_down.cross(v_drag));
                 break;
-//            case (MouseEvent.WHEEL):          // might not be possible
-//                handleWheel(e.getAmount());
-//                break;
+            case (MouseEvent.WHEEL):          // since processing-2.0b9
+                handleWheel(e.getCount());
+                break;
             default:
         }
     }
@@ -146,7 +147,7 @@ public class ArcBall {
     public void update() {
         q_now = JQuat.mult(q_drag, q_down);
         applyQuaternion2Matrix(q_now);
-      //  this.parent.scale(zoom);   //might not be possible
+        this.parent.scale(zoom, zoom, zoom);   // since processing-2.0b9
     }
 
     /**
